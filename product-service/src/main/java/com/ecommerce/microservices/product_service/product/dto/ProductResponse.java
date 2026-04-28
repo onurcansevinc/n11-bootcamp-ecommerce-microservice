@@ -1,7 +1,7 @@
-package com.ecommerce.microservices.product_service.dto;
+package com.ecommerce.microservices.product_service.product.dto;
 
-import com.ecommerce.microservices.product_service.entity.Category;
-import com.ecommerce.microservices.product_service.entity.Product;
+import com.ecommerce.microservices.product_service.category.entity.Category;
+import com.ecommerce.microservices.product_service.product.entity.Product;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

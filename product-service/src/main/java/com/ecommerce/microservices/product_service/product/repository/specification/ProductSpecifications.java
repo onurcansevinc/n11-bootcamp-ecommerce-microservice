@@ -1,6 +1,6 @@
-package com.ecommerce.microservices.product_service.repository.specification;
+package com.ecommerce.microservices.product_service.product.repository.specification;
 
-import com.ecommerce.microservices.product_service.entity.Product;
+import com.ecommerce.microservices.product_service.product.entity.Product;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;

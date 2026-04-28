@@ -1,4 +1,4 @@
-package com.ecommerce.microservices.product_service.entity;
+package com.ecommerce.microservices.product_service.category.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,9 +42,14 @@ public class Category {
     protected Category() {
     }
 
-    public Category(String name, String slug) {
+    public Category(String name, String slug, boolean active) {
+        updateDetails(name, slug, active);
+    }
+
+    public void updateDetails(String name, String slug, boolean active) {
         this.name = name;
         this.slug = slug;
+        this.active = active;
     }
 
     public Long getId() {

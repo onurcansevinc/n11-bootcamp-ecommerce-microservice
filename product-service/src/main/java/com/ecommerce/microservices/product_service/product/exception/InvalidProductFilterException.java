@@ -1,4 +1,4 @@
-package com.ecommerce.microservices.product_service.exception;
+package com.ecommerce.microservices.product_service.product.exception;
 
 public class InvalidProductFilterException extends RuntimeException {
 

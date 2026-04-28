@@ -1,4 +1,4 @@
-package com.ecommerce.microservices.product_service.entity;
+package com.ecommerce.microservices.product_service.product.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

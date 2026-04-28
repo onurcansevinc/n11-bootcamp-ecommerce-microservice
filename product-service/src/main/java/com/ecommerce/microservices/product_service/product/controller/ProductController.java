@@ -1,17 +1,27 @@
-package com.ecommerce.microservices.product_service.controller;
+package com.ecommerce.microservices.product_service.product.controller;
 
 import com.ecommerce.microservices.product_service.common.response.ApiResponse;
 import com.ecommerce.microservices.product_service.common.response.ResponseMeta;
-import com.ecommerce.microservices.product_service.dto.ProductResponse;
+import com.ecommerce.microservices.product_service.product.dto.ProductPatchRequest;
+import com.ecommerce.microservices.product_service.product.dto.ProductResponse;
+import com.ecommerce.microservices.product_service.product.dto.ProductUpsertRequest;
+import com.ecommerce.microservices.product_service.product.service.ProductService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import com.ecommerce.microservices.product_service.service.ProductService;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +64,34 @@ public class ProductController {
                 productPage.getContent(),
                 ResponseMeta.from(productPage)
         );
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@Valid @RequestBody ProductUpsertRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Product created successfully", productService.createProduct(request)));
+    }
+
+    @PutMapping("/{productId}")
+    public ApiResponse<ProductResponse> updateProduct(
+            @PathVariable Long productId,
+            @Valid @RequestBody ProductUpsertRequest request
+    ) {
+        return ApiResponse.success("Product updated successfully", productService.updateProduct(productId, request));
+    }
+
+    @PatchMapping("/{productId}")
+    public ApiResponse<ProductResponse> patchProduct(
+            @PathVariable Long productId,
+            @Valid @RequestBody ProductPatchRequest request
+    ) {
+        return ApiResponse.success("Product patched successfully", productService.patchProduct(productId, request));
+    }
+
+    @DeleteMapping("/{productId}")
+    public ApiResponse<Void> deleteProduct(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
+        return ApiResponse.success("Product deleted successfully", null);
     }
 
     @GetMapping("/{productId}")

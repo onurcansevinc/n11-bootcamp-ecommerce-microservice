@@ -14,4 +14,11 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Product not found");
         return problemDetail;
     }
+
+    @ExceptionHandler(InvalidProductFilterException.class)
+    public ProblemDetail handleInvalidProductFilter(InvalidProductFilterException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+        problemDetail.setTitle("Invalid product filter");
+        return problemDetail;
+    }
 }

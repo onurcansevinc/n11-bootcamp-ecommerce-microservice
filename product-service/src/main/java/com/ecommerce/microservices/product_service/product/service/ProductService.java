@@ -3,6 +3,7 @@ package com.ecommerce.microservices.product_service.product.service;
 import com.ecommerce.microservices.product_service.category.entity.Category;
 import com.ecommerce.microservices.product_service.category.exception.CategoryNotFoundException;
 import com.ecommerce.microservices.product_service.category.repository.CategoryRepository;
+import com.ecommerce.microservices.product_service.common.cache.CacheNames;
 import com.ecommerce.microservices.product_service.product.dto.ProductPatchRequest;
 import com.ecommerce.microservices.product_service.product.dto.ProductResponse;
 import com.ecommerce.microservices.product_service.product.dto.ProductUpsertRequest;
@@ -13,6 +14,9 @@ import com.ecommerce.microservices.product_service.product.exception.InvalidProd
 import com.ecommerce.microservices.product_service.product.exception.ProductNotFoundException;
 import com.ecommerce.microservices.product_service.product.repository.ProductRepository;
 import com.ecommerce.microservices.product_service.product.repository.specification.ProductSpecifications;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -59,6 +63,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CachePut(cacheNames = CacheNames.PRODUCT_BY_ID, key = "#result.id")
     public ProductResponse createProduct(ProductUpsertRequest request) {
         validateUniqueSku(request.sku(), null);
         Category category = getCategoryById(request.categoryId());
@@ -77,6 +82,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CachePut(cacheNames = CacheNames.PRODUCT_BY_ID, key = "#productId")
     public ProductResponse updateProduct(Long productId, ProductUpsertRequest request) {
         Product product = getProductByIdInternal(productId);
         validateUniqueSku(request.sku(), productId);
@@ -96,6 +102,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CachePut(cacheNames = CacheNames.PRODUCT_BY_ID, key = "#productId")
     public ProductResponse patchProduct(Long productId, ProductPatchRequest request) {
         if (!request.hasChanges()) {
             throw new InvalidProductPatchException("At least one field must be provided for patch");
@@ -124,12 +131,14 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheNames.PRODUCT_BY_ID, key = "#productId")
     public void deleteProduct(Long productId) {
         Product product = getProductByIdInternal(productId);
         productRepository.delete(product);
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = CacheNames.PRODUCT_BY_ID, key = "#productId")
     public ProductResponse getProductById(Long productId) {
         return ProductResponse.from(getProductByIdInternal(productId));
     }

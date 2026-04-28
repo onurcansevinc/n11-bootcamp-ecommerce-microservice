@@ -10,7 +10,12 @@ import com.ecommerce.microservices.product_service.category.exception.DuplicateC
 import com.ecommerce.microservices.product_service.category.exception.InvalidCategoryPatchException;
 import com.ecommerce.microservices.product_service.category.repository.CategoryRepository;
 import com.ecommerce.microservices.product_service.category.repository.specification.CategorySpecifications;
+import com.ecommerce.microservices.product_service.common.cache.CacheNames;
 import com.ecommerce.microservices.product_service.product.repository.ProductRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -39,6 +44,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CachePut(cacheNames = CacheNames.CATEGORY_BY_ID, key = "#result.id")
     public CategoryResponse createCategory(CategoryUpsertRequest request) {
         validateUniqueSlug(request.slug(), null);
 
@@ -52,6 +58,10 @@ public class CategoryService {
     }
 
     @Transactional
+    @Caching(
+            put = @CachePut(cacheNames = CacheNames.CATEGORY_BY_ID, key = "#categoryId"),
+            evict = @CacheEvict(cacheNames = CacheNames.PRODUCT_BY_ID, allEntries = true)
+    )
     public CategoryResponse updateCategory(Long categoryId, CategoryUpsertRequest request) {
         Category category = getCategoryByIdInternal(categoryId);
         validateUniqueSlug(request.slug(), categoryId);
@@ -61,6 +71,10 @@ public class CategoryService {
     }
 
     @Transactional
+    @Caching(
+            put = @CachePut(cacheNames = CacheNames.CATEGORY_BY_ID, key = "#categoryId"),
+            evict = @CacheEvict(cacheNames = CacheNames.PRODUCT_BY_ID, allEntries = true)
+    )
     public CategoryResponse patchCategory(Long categoryId, CategoryPatchRequest request) {
         if (!request.hasChanges()) {
             throw new InvalidCategoryPatchException("At least one field must be provided for patch");
@@ -80,6 +94,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheNames.CATEGORY_BY_ID, key = "#categoryId")
     public void deleteCategory(Long categoryId) {
         Category category = getCategoryByIdInternal(categoryId);
 
@@ -91,6 +106,7 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = CacheNames.CATEGORY_BY_ID, key = "#categoryId")
     public CategoryResponse getCategoryById(Long categoryId) {
         return CategoryResponse.from(getCategoryByIdInternal(categoryId));
     }

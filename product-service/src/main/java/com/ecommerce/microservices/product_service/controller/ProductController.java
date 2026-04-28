@@ -1,5 +1,6 @@
 package com.ecommerce.microservices.product_service.controller;
 
+import com.ecommerce.microservices.product_service.common.response.ApiResponse;
 import com.ecommerce.microservices.product_service.dto.ProductResponse;
 import com.ecommerce.microservices.product_service.service.ProductService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +20,12 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getAllProducts() {
-        return productService.getAllProducts();
+    public ApiResponse<List<ProductResponse>> getAllProducts() {
+        return ApiResponse.success("Products fetched successfully", productService.getAllProducts());
     }
 
     @GetMapping("/{productId}")
-    public ProductResponse getProductById(@PathVariable Long productId) {
-        return productService.getProductById(productId);
+    public ApiResponse<ProductResponse> getProductById(@PathVariable Long productId) {
+        return ApiResponse.success("Product fetched successfully", productService.getProductById(productId));
     }
 }

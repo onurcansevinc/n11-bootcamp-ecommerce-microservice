@@ -1,0 +1,135 @@
+{
+  "realm": "ecommerce",
+  "enabled": true,
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Full access to the e-commerce platform"
+      },
+      {
+        "name": "catalog-manager",
+        "description": "Can manage product and category data"
+      }
+    ]
+  },
+  "clientScopes": [
+    {
+      "name": "products.write",
+      "description": "Write access to product APIs",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "categories.write",
+      "description": "Write access to category APIs",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "ecommerce-api",
+      "name": "E-Commerce API Local Client",
+      "description": "Local development client for interactive API access",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "products.write",
+        "categories.write",
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "service-product-writer",
+      "name": "Service Product Writer",
+      "description": "Service-to-service demo client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "change-me-service-client-secret",
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": false,
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "roles",
+        "products.write",
+        "categories.write"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin-user",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ]
+    },
+    {
+      "username": "catalog-manager",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Catalog",
+      "lastName": "Manager",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "catalog123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "catalog-manager"
+      ]
+    }
+  ]
+}

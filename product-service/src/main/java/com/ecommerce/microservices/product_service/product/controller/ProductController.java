@@ -6,6 +6,9 @@ import com.ecommerce.microservices.product_service.product.dto.ProductPatchReque
 import com.ecommerce.microservices.product_service.product.dto.ProductResponse;
 import com.ecommerce.microservices.product_service.product.dto.ProductUpsertRequest;
 import com.ecommerce.microservices.product_service.product.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.util.List;
 
+@Tag(name = "Products", description = "Product catalog endpoints")
 @Validated
 @RestController
 @RequestMapping("/api/v1/products")
@@ -40,6 +44,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @Operation(summary = "List products")
     public ApiResponse<List<ProductResponse>> getAllProducts(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size,
@@ -67,12 +72,14 @@ public class ProductController {
     }
 
     @PostMapping
+    @Operation(summary = "Create product", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@Valid @RequestBody ProductUpsertRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Product created successfully", productService.createProduct(request)));
     }
 
     @PutMapping("/{productId}")
+    @Operation(summary = "Replace product", security = @SecurityRequirement(name = "bearerAuth"))
     public ApiResponse<ProductResponse> updateProduct(
             @PathVariable Long productId,
             @Valid @RequestBody ProductUpsertRequest request
@@ -81,6 +88,7 @@ public class ProductController {
     }
 
     @PatchMapping("/{productId}")
+    @Operation(summary = "Patch product", security = @SecurityRequirement(name = "bearerAuth"))
     public ApiResponse<ProductResponse> patchProduct(
             @PathVariable Long productId,
             @Valid @RequestBody ProductPatchRequest request
@@ -89,12 +97,14 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
+    @Operation(summary = "Delete product", security = @SecurityRequirement(name = "bearerAuth"))
     public ApiResponse<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         return ApiResponse.success("Product deleted successfully", null);
     }
 
     @GetMapping("/{productId}")
+    @Operation(summary = "Get product by id")
     public ApiResponse<ProductResponse> getProductById(@PathVariable Long productId) {
         return ApiResponse.success("Product fetched successfully", productService.getProductById(productId));
     }

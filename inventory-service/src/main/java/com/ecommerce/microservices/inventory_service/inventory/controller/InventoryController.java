@@ -6,6 +6,9 @@ import com.ecommerce.microservices.inventory_service.inventory.dto.InventoryRese
 import com.ecommerce.microservices.inventory_service.inventory.dto.InventoryResponse;
 import com.ecommerce.microservices.inventory_service.inventory.dto.InventoryUpsertRequest;
 import com.ecommerce.microservices.inventory_service.inventory.service.InventoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Inventory", description = "Inventory stock and reservation endpoints")
+@SecurityRequirement(name = "bearerAuth")
 @Validated
 @RestController
 @RequestMapping("/api/v1/inventory")
@@ -31,6 +36,7 @@ public class InventoryController {
 	}
 
 	@GetMapping("/{productId}")
+	@Operation(summary = "Get inventory by product id")
 	public ApiResponse<InventoryResponse> getInventoryByProductId(@PathVariable @Positive Long productId) {
 		return ApiResponse.success(
 				"Inventory fetched successfully",
@@ -39,6 +45,7 @@ public class InventoryController {
 	}
 
 	@PutMapping("/{productId}")
+	@Operation(summary = "Create or replace inventory for a product")
 	public ApiResponse<InventoryResponse> upsertInventory(
 			@PathVariable @Positive Long productId,
 			@Valid @RequestBody InventoryUpsertRequest request
@@ -50,6 +57,7 @@ public class InventoryController {
 	}
 
 	@PostMapping("/reservations")
+	@Operation(summary = "Create inventory reservation")
 	public ResponseEntity<ApiResponse<InventoryReservationResponse>> createReservation(
 			@Valid @RequestBody InventoryReservationRequest request
 	) {
@@ -61,6 +69,7 @@ public class InventoryController {
 	}
 
 	@GetMapping("/reservations/{reservationCode}")
+	@Operation(summary = "Get reservation by code")
 	public ApiResponse<InventoryReservationResponse> getReservationByCode(@PathVariable String reservationCode) {
 		return ApiResponse.success(
 				"Inventory reservation fetched successfully",
@@ -69,6 +78,7 @@ public class InventoryController {
 	}
 
 	@PostMapping("/reservations/{reservationCode}/confirm")
+	@Operation(summary = "Confirm reservation")
 	public ApiResponse<InventoryReservationResponse> confirmReservation(@PathVariable String reservationCode) {
 		return ApiResponse.success(
 				"Inventory reservation confirmed successfully",
@@ -77,6 +87,7 @@ public class InventoryController {
 	}
 
 	@PostMapping("/reservations/{reservationCode}/release")
+	@Operation(summary = "Release reservation")
 	public ApiResponse<InventoryReservationResponse> releaseReservation(@PathVariable String reservationCode) {
 		return ApiResponse.success(
 				"Inventory reservation released successfully",

@@ -6,6 +6,9 @@ import com.ecommerce.microservices.product_service.category.dto.CategoryUpsertRe
 import com.ecommerce.microservices.product_service.category.service.CategoryService;
 import com.ecommerce.microservices.product_service.common.response.ApiResponse;
 import com.ecommerce.microservices.product_service.common.response.ResponseMeta;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Tag(name = "Categories", description = "Category management endpoints")
 @Validated
 @RestController
 @RequestMapping("/api/v1/categories")
@@ -37,6 +41,7 @@ public class CategoryController {
     }
 
     @GetMapping
+    @Operation(summary = "List categories")
     public ApiResponse<List<CategoryResponse>> getAllCategories(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size,
@@ -53,12 +58,14 @@ public class CategoryController {
     }
 
     @PostMapping
+    @Operation(summary = "Create category", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@Valid @RequestBody CategoryUpsertRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Category created successfully", categoryService.createCategory(request)));
     }
 
     @PutMapping("/{categoryId}")
+    @Operation(summary = "Replace category", security = @SecurityRequirement(name = "bearerAuth"))
     public ApiResponse<CategoryResponse> updateCategory(
             @PathVariable Long categoryId,
             @Valid @RequestBody CategoryUpsertRequest request
@@ -67,6 +74,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/{categoryId}")
+    @Operation(summary = "Patch category", security = @SecurityRequirement(name = "bearerAuth"))
     public ApiResponse<CategoryResponse> patchCategory(
             @PathVariable Long categoryId,
             @Valid @RequestBody CategoryPatchRequest request
@@ -75,12 +83,14 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
+    @Operation(summary = "Delete category", security = @SecurityRequirement(name = "bearerAuth"))
     public ApiResponse<Void> deleteCategory(@PathVariable Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return ApiResponse.success("Category deleted successfully", null);
     }
 
     @GetMapping("/{categoryId}")
+    @Operation(summary = "Get category by id")
     public ApiResponse<CategoryResponse> getCategoryById(@PathVariable Long categoryId) {
         return ApiResponse.success("Category fetched successfully", categoryService.getCategoryById(categoryId));
     }

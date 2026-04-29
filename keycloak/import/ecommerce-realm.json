@@ -37,6 +37,26 @@
         "display.on.consent.screen": "false"
       },
       "protocolMappers": []
+    },
+    {
+      "name": "inventory.read",
+      "description": "Read access to inventory APIs",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "inventory.write",
+      "description": "Write access to inventory APIs",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
     }
   ],
   "clients": [
@@ -61,6 +81,8 @@
       "optionalClientScopes": [
         "products.write",
         "categories.write",
+        "inventory.read",
+        "inventory.write",
         "address",
         "phone",
         "offline_access",
@@ -86,7 +108,9 @@
         "email",
         "roles",
         "products.write",
-        "categories.write"
+        "categories.write",
+        "inventory.read",
+        "inventory.write"
       ],
       "optionalClientScopes": [
         "address",

@@ -72,7 +72,6 @@ public class ProductService {
                 request.name(),
                 request.description(),
                 request.price(),
-                request.stockQuantity(),
                 request.sku(),
                 request.active(),
                 category
@@ -92,7 +91,6 @@ public class ProductService {
                 request.name(),
                 request.description(),
                 request.price(),
-                request.stockQuantity(),
                 request.sku(),
                 request.active(),
                 category
@@ -121,7 +119,6 @@ public class ProductService {
                 request.name() != null ? request.name() : product.getName(),
                 request.description() != null ? request.description() : product.getDescription(),
                 request.price() != null ? request.price() : product.getPrice(),
-                request.stockQuantity() != null ? request.stockQuantity() : product.getStockQuantity(),
                 finalSku,
                 request.active() != null ? request.active() : product.getActive(),
                 category

@@ -3,7 +3,6 @@ package com.ecommerce.microservices.product_service.product.dto;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
@@ -19,9 +18,6 @@ public record ProductPatchRequest(
         @DecimalMin(value = "0.0", inclusive = false)
         BigDecimal price,
 
-        @PositiveOrZero
-        Integer stockQuantity,
-
         @Pattern(regexp = ".*\\S.*", message = "must not be blank")
         @Size(max = 100)
         String sku,
@@ -35,7 +31,6 @@ public record ProductPatchRequest(
         return name != null
                 || description != null
                 || price != null
-                || stockQuantity != null
                 || sku != null
                 || active != null
                 || categoryId != null;

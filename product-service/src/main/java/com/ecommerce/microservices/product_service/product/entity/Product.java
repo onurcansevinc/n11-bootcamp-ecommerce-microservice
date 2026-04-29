@@ -45,9 +45,6 @@ public class Product {
     @Column(name = "price", nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "stock_quantity", nullable = false)
-    private Integer stockQuantity;
-
     @Column(name = "sku", nullable = false, length = 100)
     private String sku;
 
@@ -75,19 +72,17 @@ public class Product {
             String name,
             String description,
             BigDecimal price,
-            Integer stockQuantity,
             String sku,
             boolean active,
             Category category
     ) {
-        updateDetails(name, description, price, stockQuantity, sku, active, category);
+        updateDetails(name, description, price, sku, active, category);
     }
 
     public void updateDetails(
             String name,
             String description,
             BigDecimal price,
-            Integer stockQuantity,
             String sku,
             boolean active,
             Category category
@@ -95,7 +90,6 @@ public class Product {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.stockQuantity = stockQuantity;
         this.sku = sku;
         this.active = active;
         this.category = category;
@@ -127,10 +121,6 @@ public class Product {
 
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public Integer getStockQuantity() {
-        return stockQuantity;
     }
 
     public String getSku() {

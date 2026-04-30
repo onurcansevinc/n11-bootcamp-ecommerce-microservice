@@ -154,6 +154,20 @@
       "realmRoles": [
         "catalog-manager"
       ]
+    },
+    {
+      "username": "customer-user",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Customer",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "customer123",
+          "temporary": false
+        }
+      ]
     }
   ]
 }

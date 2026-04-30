@@ -31,6 +31,7 @@ public class SecurityConfig {
 						.pathMatchers(HttpMethod.GET, "/api/v1/categories", "/api/v1/categories/**").permitAll()
 						.pathMatchers(HttpMethod.GET, "/api/v1/inventory/**")
 						.hasAnyAuthority("SCOPE_inventory.read", "SCOPE_inventory.write", "ROLE_ADMIN", "ROLE_CATALOG_MANAGER")
+						.pathMatchers("/api/v1/carts/**").authenticated()
 						.pathMatchers(HttpMethod.POST, "/api/v1/products", "/api/v1/products/**")
 						.hasAnyAuthority("SCOPE_products.write", "ROLE_ADMIN", "ROLE_CATALOG_MANAGER")
 						.pathMatchers(HttpMethod.PUT, "/api/v1/products", "/api/v1/products/**")

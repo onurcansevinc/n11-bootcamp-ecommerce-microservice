@@ -1,7 +1,12 @@
 package com.ecommerce.microservices.inventory_service.common.security;
 
+import com.ecommerce.microservices.common.web.security.CommonServletSecurityConfiguration;
+import com.ecommerce.microservices.common.web.security.KeycloakJwtAuthoritiesConverter;
+import com.ecommerce.microservices.common.web.security.RestAccessDeniedHandler;
+import com.ecommerce.microservices.common.web.security.RestAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -9,6 +14,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@Import(CommonServletSecurityConfiguration.class)
 public class SecurityConfig {
 
 	@Bean
@@ -22,6 +28,7 @@ public class SecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/actuator/health/**", "/actuator/info", "/actuator/prometheus").permitAll()
+						.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/v1/inventory/**")
 						.hasAnyAuthority("SCOPE_inventory.read", "SCOPE_inventory.write", "ROLE_ADMIN", "ROLE_CATALOG_MANAGER")
 						.requestMatchers(HttpMethod.POST, "/api/v1/inventory/**")

@@ -1,6 +1,6 @@
 package com.ecommerce.microservices.inventory_service.inventory.controller;
 
-import com.ecommerce.microservices.inventory_service.common.response.ApiResponse;
+import com.ecommerce.microservices.common.web.response.ApiResponse;
 import com.ecommerce.microservices.inventory_service.inventory.dto.InventoryReservationRequest;
 import com.ecommerce.microservices.inventory_service.inventory.dto.InventoryReservationResponse;
 import com.ecommerce.microservices.inventory_service.inventory.dto.InventoryResponse;

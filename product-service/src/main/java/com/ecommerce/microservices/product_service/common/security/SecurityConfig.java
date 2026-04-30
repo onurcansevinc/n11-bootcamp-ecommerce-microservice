@@ -1,7 +1,12 @@
 package com.ecommerce.microservices.product_service.common.security;
 
+import com.ecommerce.microservices.common.web.security.CommonServletSecurityConfiguration;
+import com.ecommerce.microservices.common.web.security.KeycloakJwtAuthoritiesConverter;
+import com.ecommerce.microservices.common.web.security.RestAccessDeniedHandler;
+import com.ecommerce.microservices.common.web.security.RestAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,6 +15,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@Import(CommonServletSecurityConfiguration.class)
 public class SecurityConfig {
 
 	@Bean
@@ -23,6 +29,7 @@ public class SecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/actuator/health/**", "/actuator/info", "/actuator/prometheus").permitAll()
+						.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/v1/products", "/api/v1/products/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/v1/categories", "/api/v1/categories/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/v1/products", "/api/v1/products/**")

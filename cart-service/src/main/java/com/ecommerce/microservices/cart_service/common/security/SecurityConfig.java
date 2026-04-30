@@ -1,13 +1,19 @@
 package com.ecommerce.microservices.cart_service.common.security;
 
+import com.ecommerce.microservices.common.web.security.CommonServletSecurityConfiguration;
+import com.ecommerce.microservices.common.web.security.KeycloakJwtAuthoritiesConverter;
+import com.ecommerce.microservices.common.web.security.RestAccessDeniedHandler;
+import com.ecommerce.microservices.common.web.security.RestAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@Import(CommonServletSecurityConfiguration.class)
 public class SecurityConfig {
 
 	@Bean

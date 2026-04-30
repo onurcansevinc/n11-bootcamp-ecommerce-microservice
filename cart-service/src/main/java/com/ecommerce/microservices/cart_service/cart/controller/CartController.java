@@ -4,7 +4,7 @@ import com.ecommerce.microservices.cart_service.cart.dto.CartResponse;
 import com.ecommerce.microservices.cart_service.cart.dto.CreateCartItemRequest;
 import com.ecommerce.microservices.cart_service.cart.dto.UpdateCartItemRequest;
 import com.ecommerce.microservices.cart_service.cart.service.CartService;
-import com.ecommerce.microservices.cart_service.common.response.ApiResponse;
+import com.ecommerce.microservices.common.web.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

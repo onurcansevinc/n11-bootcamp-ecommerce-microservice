@@ -4,8 +4,8 @@ import com.ecommerce.microservices.product_service.category.dto.CategoryPatchReq
 import com.ecommerce.microservices.product_service.category.dto.CategoryResponse;
 import com.ecommerce.microservices.product_service.category.dto.CategoryUpsertRequest;
 import com.ecommerce.microservices.product_service.category.service.CategoryService;
-import com.ecommerce.microservices.product_service.common.response.ApiResponse;
-import com.ecommerce.microservices.product_service.common.response.ResponseMeta;
+import com.ecommerce.microservices.common.web.response.ApiResponse;
+import com.ecommerce.microservices.common.web.response.ResponseMeta;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

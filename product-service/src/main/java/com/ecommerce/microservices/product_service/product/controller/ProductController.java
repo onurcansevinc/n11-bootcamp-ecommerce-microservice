@@ -1,7 +1,7 @@
 package com.ecommerce.microservices.product_service.product.controller;
 
-import com.ecommerce.microservices.product_service.common.response.ApiResponse;
-import com.ecommerce.microservices.product_service.common.response.ResponseMeta;
+import com.ecommerce.microservices.common.web.response.ApiResponse;
+import com.ecommerce.microservices.common.web.response.ResponseMeta;
 import com.ecommerce.microservices.product_service.product.dto.ProductPatchRequest;
 import com.ecommerce.microservices.product_service.product.dto.ProductResponse;
 import com.ecommerce.microservices.product_service.product.dto.ProductUpsertRequest;

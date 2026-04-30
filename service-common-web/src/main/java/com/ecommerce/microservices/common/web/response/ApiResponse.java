@@ -1,4 +1,4 @@
-package com.ecommerce.microservices.product_service.common.response;
+package com.ecommerce.microservices.common.web.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

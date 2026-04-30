@@ -1,9 +1,7 @@
-package com.ecommerce.microservices.product_service.common.response;
+package com.ecommerce.microservices.common.web.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.domain.Page;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ResponseMeta(
         Integer page,
         Integer size,

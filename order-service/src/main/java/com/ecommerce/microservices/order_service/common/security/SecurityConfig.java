@@ -28,6 +28,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/actuator/health/**", "/actuator/info", "/actuator/prometheus").permitAll()
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+						.requestMatchers("/internal/orders/**").hasAuthority("SCOPE_orders.write")
 						.requestMatchers("/api/v1/orders/**").authenticated()
 						.anyRequest().authenticated()
 				)

@@ -10,6 +10,7 @@ import com.ecommerce.microservices.order_service.order.dto.OrderResponse;
 import com.ecommerce.microservices.order_service.order.entity.OrderEntity;
 import com.ecommerce.microservices.order_service.order.entity.OrderItemEntity;
 import com.ecommerce.microservices.order_service.order.exception.EmptyCartForOrderException;
+import com.ecommerce.microservices.order_service.order.exception.InvalidOrderStateException;
 import com.ecommerce.microservices.order_service.order.exception.OrderAccessDeniedException;
 import com.ecommerce.microservices.order_service.order.exception.OrderNotFoundException;
 import com.ecommerce.microservices.order_service.order.repository.OrderRepository;
@@ -52,7 +53,7 @@ public class OrderService {
 		try {
 			for (CartItemSummary item : cart.items()) {
 				reservations.add(
-						orderInventoryClient.createReservation(item.productId(), item.quantity(), bearerToken)
+						orderInventoryClient.createReservation(item.productId(), item.quantity())
 				);
 			}
 
@@ -98,13 +99,52 @@ public class OrderService {
 				.map(OrderResponse::from);
 	}
 
+	@Transactional
+	public void markPaymentSucceeded(String orderId) {
+		OrderEntity order = getRequiredOrder(orderId);
+		assertPendingPayment(order);
+
+		for (OrderItemEntity item : order.getItemsOrderedById()) {
+			orderInventoryClient.confirmReservation(item.getReservationCode());
+		}
+
+		order.markPaid();
+	}
+
+	@Transactional
+	public void markPaymentFailed(String orderId) {
+		OrderEntity order = getRequiredOrder(orderId);
+		assertPendingPayment(order);
+
+		for (OrderItemEntity item : order.getItemsOrderedById()) {
+			orderInventoryClient.releaseReservation(item.getReservationCode());
+		}
+
+		order.markPaymentFailed();
+	}
+
 	private void releaseReservationsQuietly(List<InventoryReservationSummary> reservations, String bearerToken) {
 		for (InventoryReservationSummary reservation : reservations) {
 			try {
-				orderInventoryClient.releaseReservation(reservation.reservationCode(), bearerToken);
+				orderInventoryClient.releaseReservation(reservation.reservationCode());
 			} catch (RuntimeException ignored) {
 				// Best effort compensation. RabbitMQ/outbox phase will make this explicit.
 			}
+		}
+	}
+
+	private OrderEntity getRequiredOrder(String orderId) {
+		return orderRepository.findById(orderId)
+				.orElseThrow(() -> new OrderNotFoundException(orderId));
+	}
+
+	private void assertPendingPayment(OrderEntity order) {
+		if (order.getStatus() != com.ecommerce.microservices.order_service.order.entity.OrderStatus.PENDING_PAYMENT) {
+			throw new InvalidOrderStateException(
+					order.getId(),
+					"PENDING_PAYMENT",
+					order.getStatus().name()
+			);
 		}
 	}
 

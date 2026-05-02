@@ -4,8 +4,10 @@ import com.ecommerce.microservices.order_service.inventory.dto.InventoryReservat
 
 public interface OrderInventoryClient {
 
-	InventoryReservationSummary createReservation(Long productId, Integer quantity, String bearerToken);
+	InventoryReservationSummary createReservation(Long productId, Integer quantity);
 
-	void releaseReservation(String reservationCode, String bearerToken);
+	void confirmReservation(String reservationCode);
+
+	void releaseReservation(String reservationCode);
 
 }

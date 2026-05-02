@@ -57,9 +57,50 @@
         "display.on.consent.screen": "false"
       },
       "protocolMappers": []
+    },
+    {
+      "name": "orders.write",
+      "description": "Internal write access to order APIs",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
     }
   ],
   "clients": [
+    {
+      "clientId": "storefront-web",
+      "name": "Storefront Web Client",
+      "description": "React storefront single-page application client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173"
+      ],
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
     {
       "clientId": "ecommerce-api",
       "name": "E-Commerce API Local Client",
@@ -90,9 +131,9 @@
       ]
     },
     {
-      "clientId": "service-product-writer",
-      "name": "Service Product Writer",
-      "description": "Service-to-service demo client",
+      "clientId": "service-internal",
+      "name": "Internal Service Client",
+      "description": "Service-to-service internal client",
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": false,
@@ -107,10 +148,9 @@
         "profile",
         "email",
         "roles",
-        "products.write",
-        "categories.write",
         "inventory.read",
-        "inventory.write"
+        "inventory.write",
+        "orders.write"
       ],
       "optionalClientScopes": [
         "address",

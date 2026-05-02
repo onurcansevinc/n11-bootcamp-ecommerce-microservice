@@ -6,6 +6,7 @@ import com.ecommerce.microservices.order_service.order.exception.CartServiceUnav
 import com.ecommerce.microservices.order_service.order.exception.EmptyCartForOrderException;
 import com.ecommerce.microservices.order_service.order.exception.InventoryReservationFailedException;
 import com.ecommerce.microservices.order_service.order.exception.InventoryServiceUnavailableException;
+import com.ecommerce.microservices.order_service.order.exception.InvalidOrderStateException;
 import com.ecommerce.microservices.order_service.order.exception.OrderAccessDeniedException;
 import com.ecommerce.microservices.order_service.order.exception.OrderNotFoundException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
@@ -52,6 +53,13 @@ public class GlobalExceptionHandler {
 	public ProblemDetail handleEmptyCartForOrder(EmptyCartForOrderException exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
 		problemDetail.setTitle("Empty cart");
+		return problemDetail;
+	}
+
+	@ExceptionHandler(InvalidOrderStateException.class)
+	public ProblemDetail handleInvalidOrderState(InvalidOrderStateException exception) {
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+		problemDetail.setTitle("Invalid order state");
 		return problemDetail;
 	}
 

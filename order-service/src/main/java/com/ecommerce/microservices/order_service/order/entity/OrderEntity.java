@@ -63,6 +63,14 @@ public class OrderEntity {
 		this.items.add(item);
 	}
 
+	public void markPaid() {
+		this.status = OrderStatus.PAID;
+	}
+
+	public void markPaymentFailed() {
+		this.status = OrderStatus.PAYMENT_FAILED;
+	}
+
 	public List<OrderItemEntity> getItemsOrderedById() {
 		return items.stream()
 				.sorted(Comparator.comparing(OrderItemEntity::getId, Comparator.nullsLast(Long::compareTo)))

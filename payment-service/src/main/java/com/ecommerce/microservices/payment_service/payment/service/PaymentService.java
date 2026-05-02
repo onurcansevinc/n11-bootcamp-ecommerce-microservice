@@ -19,6 +19,7 @@ import com.ecommerce.microservices.payment_service.payment.gateway.PaymentInitia
 import com.ecommerce.microservices.payment_service.payment.gateway.PaymentVerificationResult;
 import com.ecommerce.microservices.payment_service.payment.gateway.IyzicoPaymentGatewayAdapter;
 import com.ecommerce.microservices.payment_service.payment.repository.PaymentRepository;
+import com.ecommerce.microservices.payment_service.outbox.service.PaymentOutboxService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -34,17 +35,20 @@ public class PaymentService {
 	private final PaymentOrderClient paymentOrderClient;
 	private final PaymentGatewayRegistry paymentGatewayRegistry;
 	private final IyzicoPaymentGatewayAdapter iyzicoPaymentGatewayAdapter;
+	private final PaymentOutboxService paymentOutboxService;
 
 	public PaymentService(
 			PaymentRepository paymentRepository,
 			PaymentOrderClient paymentOrderClient,
 			PaymentGatewayRegistry paymentGatewayRegistry,
-			IyzicoPaymentGatewayAdapter iyzicoPaymentGatewayAdapter
+			IyzicoPaymentGatewayAdapter iyzicoPaymentGatewayAdapter,
+			PaymentOutboxService paymentOutboxService
 	) {
 		this.paymentRepository = paymentRepository;
 		this.paymentOrderClient = paymentOrderClient;
 		this.paymentGatewayRegistry = paymentGatewayRegistry;
 		this.iyzicoPaymentGatewayAdapter = iyzicoPaymentGatewayAdapter;
+		this.paymentOutboxService = paymentOutboxService;
 	}
 
 	@Transactional
@@ -95,10 +99,7 @@ public class PaymentService {
 		PaymentEntity payment = getOwnedPayment(paymentId, customerId);
 		assertPending(payment);
 
-		paymentOrderClient.markPaymentSucceeded(payment.getOrderId());
-		payment.markSucceeded();
-
-		return PaymentResponse.from(paymentRepository.save(payment));
+		return completeSucceededPayment(payment);
 	}
 
 	@Transactional
@@ -106,10 +107,7 @@ public class PaymentService {
 		PaymentEntity payment = getOwnedPayment(paymentId, customerId);
 		assertPending(payment);
 
-		paymentOrderClient.markPaymentFailed(payment.getOrderId());
-		payment.markFailed("Sandbox payment marked as failed");
-
-		return PaymentResponse.from(paymentRepository.save(payment));
+		return completeFailedPayment(payment, "Sandbox payment marked as failed");
 	}
 
 	@Transactional
@@ -123,14 +121,10 @@ public class PaymentService {
 
 		PaymentVerificationResult verificationResult = iyzicoPaymentGatewayAdapter.retrieve(token);
 		if (verificationResult.successful()) {
-			paymentOrderClient.markPaymentSucceeded(payment.getOrderId());
-			payment.markSucceeded();
+			return completeSucceededPayment(payment);
 		} else {
-			paymentOrderClient.markPaymentFailed(payment.getOrderId());
-			payment.markFailed(verificationResult.failureReason());
+			return completeFailedPayment(payment, verificationResult.failureReason());
 		}
-
-		return PaymentResponse.from(paymentRepository.save(payment));
 	}
 
 	private PaymentEntity getOwnedPayment(String paymentId, String customerId) {
@@ -158,6 +152,18 @@ public class PaymentService {
 					payment.getStatus().name()
 			);
 		}
+	}
+
+	private PaymentResponse completeSucceededPayment(PaymentEntity payment) {
+		payment.markSucceeded();
+		paymentOutboxService.appendSucceededEvent(payment);
+		return PaymentResponse.from(paymentRepository.save(payment));
+	}
+
+	private PaymentResponse completeFailedPayment(PaymentEntity payment, String failureReason) {
+		payment.markFailed(failureReason);
+		paymentOutboxService.appendFailedEvent(payment);
+		return PaymentResponse.from(paymentRepository.save(payment));
 	}
 
 }

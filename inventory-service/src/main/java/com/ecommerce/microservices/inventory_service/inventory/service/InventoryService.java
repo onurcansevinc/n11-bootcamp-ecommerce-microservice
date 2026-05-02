@@ -91,6 +91,9 @@ public class InventoryService {
 	@Transactional
 	public InventoryReservationResponse confirmReservation(String reservationCode) {
 		InventoryReservation reservation = getReservation(reservationCode);
+		if (reservation.getStatus() == com.ecommerce.microservices.inventory_service.inventory.entity.ReservationStatus.CONFIRMED) {
+			return InventoryReservationResponse.from(reservation);
+		}
 		validateConfirmableReservation(reservation);
 
 		InventoryItem inventoryItem = getInventoryItem(reservation.getProductId());
@@ -110,6 +113,9 @@ public class InventoryService {
 	@Transactional
 	public InventoryReservationResponse releaseReservation(String reservationCode) {
 		InventoryReservation reservation = getReservation(reservationCode);
+		if (reservation.getStatus() == com.ecommerce.microservices.inventory_service.inventory.entity.ReservationStatus.RELEASED) {
+			return InventoryReservationResponse.from(reservation);
+		}
 		validateReleasableReservation(reservation);
 
 		InventoryItem inventoryItem = getInventoryItem(reservation.getProductId());

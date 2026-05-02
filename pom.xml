@@ -11,6 +11,7 @@
 
     <modules>
         <module>service-common-web</module>
+        <module>service-common-events</module>
         <module>product-service</module>
         <module>inventory-service</module>
         <module>cart-service</module>

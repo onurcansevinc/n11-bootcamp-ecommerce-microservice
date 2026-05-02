@@ -1,5 +1,6 @@
 package com.ecommerce.microservices.order_service.order.service;
 
+import com.ecommerce.microservices.common.events.payment.PaymentEventTypes;
 import com.ecommerce.microservices.order_service.cart.client.OrderCartClient;
 import com.ecommerce.microservices.order_service.cart.dto.CartItemSummary;
 import com.ecommerce.microservices.order_service.cart.dto.CartSummary;
@@ -14,6 +15,8 @@ import com.ecommerce.microservices.order_service.order.exception.InvalidOrderSta
 import com.ecommerce.microservices.order_service.order.exception.OrderAccessDeniedException;
 import com.ecommerce.microservices.order_service.order.exception.OrderNotFoundException;
 import com.ecommerce.microservices.order_service.order.repository.OrderRepository;
+import com.ecommerce.microservices.order_service.payment.processed.entity.ProcessedPaymentEventEntity;
+import com.ecommerce.microservices.order_service.payment.processed.repository.ProcessedPaymentEventRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,15 +32,18 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderCartClient orderCartClient;
 	private final OrderInventoryClient orderInventoryClient;
+	private final ProcessedPaymentEventRepository processedPaymentEventRepository;
 
 	public OrderService(
 			OrderRepository orderRepository,
 			OrderCartClient orderCartClient,
-			OrderInventoryClient orderInventoryClient
+			OrderInventoryClient orderInventoryClient,
+			ProcessedPaymentEventRepository processedPaymentEventRepository
 	) {
 		this.orderRepository = orderRepository;
 		this.orderCartClient = orderCartClient;
 		this.orderInventoryClient = orderInventoryClient;
+		this.processedPaymentEventRepository = processedPaymentEventRepository;
 	}
 
 	@Transactional
@@ -123,6 +129,48 @@ public class OrderService {
 		order.markPaymentFailed();
 	}
 
+	@Transactional
+	public void handlePaymentSucceededEvent(String eventId, String orderId) {
+		if (processedPaymentEventRepository.existsById(eventId)) {
+			return;
+		}
+
+		OrderEntity order = getRequiredOrder(orderId);
+		if (order.getStatus() == com.ecommerce.microservices.order_service.order.entity.OrderStatus.PAID) {
+			recordProcessedEvent(eventId, PaymentEventTypes.SUCCEEDED, orderId);
+			return;
+		}
+
+		assertPendingPayment(order);
+		for (OrderItemEntity item : order.getItemsOrderedById()) {
+			orderInventoryClient.confirmReservation(item.getReservationCode());
+		}
+
+		order.markPaid();
+		recordProcessedEvent(eventId, PaymentEventTypes.SUCCEEDED, orderId);
+	}
+
+	@Transactional
+	public void handlePaymentFailedEvent(String eventId, String orderId) {
+		if (processedPaymentEventRepository.existsById(eventId)) {
+			return;
+		}
+
+		OrderEntity order = getRequiredOrder(orderId);
+		if (order.getStatus() == com.ecommerce.microservices.order_service.order.entity.OrderStatus.PAYMENT_FAILED) {
+			recordProcessedEvent(eventId, PaymentEventTypes.FAILED, orderId);
+			return;
+		}
+
+		assertPendingPayment(order);
+		for (OrderItemEntity item : order.getItemsOrderedById()) {
+			orderInventoryClient.releaseReservation(item.getReservationCode());
+		}
+
+		order.markPaymentFailed();
+		recordProcessedEvent(eventId, PaymentEventTypes.FAILED, orderId);
+	}
+
 	private void releaseReservationsQuietly(List<InventoryReservationSummary> reservations, String bearerToken) {
 		for (InventoryReservationSummary reservation : reservations) {
 			try {
@@ -146,6 +194,10 @@ public class OrderService {
 					order.getStatus().name()
 			);
 		}
+	}
+
+	private void recordProcessedEvent(String eventId, String eventType, String orderId) {
+		processedPaymentEventRepository.save(new ProcessedPaymentEventEntity(eventId, eventType, orderId));
 	}
 
 }

@@ -5,6 +5,7 @@ import com.ecommerce.microservices.order_service.order.exception.CartAccessDenie
 import com.ecommerce.microservices.order_service.order.exception.CartNotFoundForOrderException;
 import com.ecommerce.microservices.order_service.order.exception.CartServiceUnavailableException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +23,7 @@ public class RestOrderCartClient implements OrderCartClient {
 	private final String cartServiceBaseUrl;
 
 	public RestOrderCartClient(
-			RestTemplate restTemplate,
+			@Qualifier("serviceRestTemplate") RestTemplate restTemplate,
 			@Value("${clients.cart-service.base-url:http://cart-service}") String cartServiceBaseUrl
 	) {
 		this.restTemplate = restTemplate;

@@ -129,8 +129,7 @@ public class PaymentController {
 				.build()
 				.toUriString();
 
-		return ResponseEntity.status(HttpStatus.FOUND)
-				header(HttpHeaders.LOCATION, redirectUrl)
+		return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, redirectUrl)
 				.build();
 	}
 

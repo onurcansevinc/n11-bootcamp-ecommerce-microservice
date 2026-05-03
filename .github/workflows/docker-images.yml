@@ -1,0 +1,71 @@
+name: Docker Images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: Publish ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - module: product-service
+            image: product-service
+          - module: inventory-service
+            image: inventory-service
+          - module: cart-service
+            image: cart-service
+          - module: order-service
+            image: order-service
+          - module: payment-service
+            image: payment-service
+          - module: notification-service
+            image: notification-service
+          - module: api-gateway
+            image: api-gateway
+          - module: config-server
+            image: config-server
+          - module: discovery-server
+            image: discovery-server
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Make Maven Wrapper Executable
+        run: chmod +x mvnw
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare Image Metadata
+        run: |
+          echo "IMAGE_OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+          echo "IMAGE_TAG=${GITHUB_SHA::12}" >> "$GITHUB_ENV"
+
+      - name: Build and Publish Image
+        run: |
+          ./mvnw -pl ${{ matrix.module }} -am -Dmaven.test.skip=true package \
+            com.google.cloud.tools:jib-maven-plugin:3.4.6:build \
+            -Djib.to.image=ghcr.io/${IMAGE_OWNER}/java-ecommerce-${{ matrix.image }}:${IMAGE_TAG} \
+            -Djib.to.tags=latest

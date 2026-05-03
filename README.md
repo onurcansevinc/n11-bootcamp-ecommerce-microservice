@@ -44,3 +44,24 @@ Notlar:
 
 - `service-common-web` ve `service-common-events` library modülleridir; doğrudan Jib image üretmezler.
 - Root `pom.xml` aggregator olduğu için Jib komutunu modül `pom.xml` üstünden çalıştırmak daha nettir.
+
+## GitHub Actions
+
+Repo içinde iki workflow tanımlıdır:
+
+- `.github/workflows/ci.yml`
+  PR ve branch push'larında backend testlerini, frontend build'ini, Docker Compose config doğrulamasını ve Jib smoke build'ini çalıştırır.
+- `.github/workflows/docker-images.yml`
+  `main` push'unda ve manuel tetiklemede runnable servis image'larını GHCR'a yollar.
+
+GHCR image isimleri şu formatta üretilir:
+
+- `ghcr.io/<github-owner>/java-ecommerce-product-service`
+- `ghcr.io/<github-owner>/java-ecommerce-inventory-service`
+- `ghcr.io/<github-owner>/java-ecommerce-cart-service`
+- `ghcr.io/<github-owner>/java-ecommerce-order-service`
+- `ghcr.io/<github-owner>/java-ecommerce-payment-service`
+- `ghcr.io/<github-owner>/java-ecommerce-notification-service`
+- `ghcr.io/<github-owner>/java-ecommerce-api-gateway`
+- `ghcr.io/<github-owner>/java-ecommerce-config-server`
+- `ghcr.io/<github-owner>/java-ecommerce-discovery-server`

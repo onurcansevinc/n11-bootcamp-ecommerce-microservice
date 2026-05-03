@@ -51,6 +51,9 @@ public class Product {
     @Column(name = "active", nullable = false)
     private boolean active = true;
 
+    @Column(name = "campaign_label", length = 60)
+    private String campaignLabel;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "category_id",
@@ -74,9 +77,10 @@ public class Product {
             BigDecimal price,
             String sku,
             boolean active,
+            String campaignLabel,
             Category category
     ) {
-        updateDetails(name, description, price, sku, active, category);
+        updateDetails(name, description, price, sku, active, campaignLabel, category);
     }
 
     public void updateDetails(
@@ -85,6 +89,7 @@ public class Product {
             BigDecimal price,
             String sku,
             boolean active,
+            String campaignLabel,
             Category category
     ) {
         this.name = name;
@@ -92,6 +97,7 @@ public class Product {
         this.price = price;
         this.sku = sku;
         this.active = active;
+        this.campaignLabel = normalizeCampaignLabel(campaignLabel);
         this.category = category;
     }
 
@@ -135,11 +141,24 @@ public class Product {
         return category;
     }
 
+    public String getCampaignLabel() {
+        return campaignLabel;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    private String normalizeCampaignLabel(String campaignLabel) {
+        if (campaignLabel == null) {
+            return null;
+        }
+
+        String normalizedCampaignLabel = campaignLabel.trim();
+        return normalizedCampaignLabel.isEmpty() ? null : normalizedCampaignLabel;
     }
 }

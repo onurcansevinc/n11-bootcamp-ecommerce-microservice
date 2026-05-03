@@ -27,6 +27,9 @@ public record ProductUpsertRequest(
         @NotNull
         Boolean active,
 
+        @Size(max = 60)
+        String campaignLabel,
+
         @NotNull
         @Positive
         Long categoryId

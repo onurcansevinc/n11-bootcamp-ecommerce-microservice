@@ -4,7 +4,7 @@ export default function ProductCard({ product, onQuickView, onAddToCart }) {
   return (
     <article className="product-card">
       <button type="button" className="product-visual" onClick={() => onQuickView(product.id)}>
-        <span className="discount-ribbon">Öne Çıkan</span>
+        {product.campaignLabel ? <span className="discount-ribbon">{product.campaignLabel}</span> : null}
         {product.mainImageUrl ? (
           <img className="product-image" src={product.mainImageUrl} alt={product.name} loading="lazy" />
         ) : (

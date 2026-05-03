@@ -88,6 +88,7 @@ class ProductServiceTest {
                 BigDecimal.valueOf(1999.90),
                 sku,
                 true,
+                "Öne Çıkan",
                 null
         );
 

@@ -24,6 +24,9 @@ public record ProductPatchRequest(
 
         Boolean active,
 
+        @Size(max = 60)
+        String campaignLabel,
+
         @Positive
         Long categoryId
 ) {
@@ -33,6 +36,7 @@ public record ProductPatchRequest(
                 || price != null
                 || sku != null
                 || active != null
+                || campaignLabel != null
                 || categoryId != null;
     }
 }

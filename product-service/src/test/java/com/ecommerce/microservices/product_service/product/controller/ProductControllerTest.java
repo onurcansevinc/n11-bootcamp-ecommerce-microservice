@@ -79,6 +79,7 @@ class ProductControllerTest {
 				BigDecimal.valueOf(249.90),
 				"SKU-1",
 				true,
+				"Öne Çıkan",
 				3L
 		);
 		ProductResponse response = sampleProductResponse();
@@ -90,7 +91,8 @@ class ProductControllerTest {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.message").value("Product created successfully"))
 				.andExpect(jsonPath("$.data.id").value(1))
-				.andExpect(jsonPath("$.data.name").value("Keyboard"));
+				.andExpect(jsonPath("$.data.name").value("Keyboard"))
+				.andExpect(jsonPath("$.data.campaignLabel").value("Öne Çıkan"));
 	}
 
 	@Test
@@ -115,7 +117,7 @@ class ProductControllerTest {
 
 	@Test
 	void patchProductMapsBusinessValidationToProblemDetail() throws Exception {
-		ProductPatchRequest request = new ProductPatchRequest(null, null, null, null, null, null);
+		ProductPatchRequest request = new ProductPatchRequest(null, null, null, null, null, null, null);
 		when(productService.patchProduct(1L, request))
 				.thenThrow(new InvalidProductPatchException("At least one field must be provided for patch"));
 
@@ -145,6 +147,7 @@ class ProductControllerTest {
 				BigDecimal.valueOf(249.90),
 				"SKU-1",
 				true,
+				"Öne Çıkan",
 				"https://cdn.example.com/keyboard.jpg",
 				new ProductResponse.CategorySummary(3L, "Accessories", "accessories"),
 				LocalDateTime.now(),

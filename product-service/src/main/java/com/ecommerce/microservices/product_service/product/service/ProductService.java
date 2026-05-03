@@ -84,6 +84,7 @@ public class ProductService {
                 request.price(),
                 request.sku(),
                 request.active(),
+                request.campaignLabel(),
                 category
         );
 
@@ -104,6 +105,7 @@ public class ProductService {
                 request.price(),
                 request.sku(),
                 request.active(),
+                request.campaignLabel(),
                 category
         );
 
@@ -133,6 +135,7 @@ public class ProductService {
                 request.price() != null ? request.price() : product.getPrice(),
                 finalSku,
                 request.active() != null ? request.active() : product.getActive(),
+                request.campaignLabel() != null ? request.campaignLabel() : product.getCampaignLabel(),
                 category
         );
 

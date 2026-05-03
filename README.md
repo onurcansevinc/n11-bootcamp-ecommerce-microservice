@@ -65,3 +65,25 @@ GHCR image isimleri şu formatta üretilir:
 - `ghcr.io/<github-owner>/java-ecommerce-api-gateway`
 - `ghcr.io/<github-owner>/java-ecommerce-config-server`
 - `ghcr.io/<github-owner>/java-ecommerce-discovery-server`
+
+## Jenkins
+
+Repo kökünde bir `Jenkinsfile` vardır. Pipeline şu adımları içerir:
+
+- checkout
+- backend için `./mvnw test`
+- frontend için `npm ci` ve `npm run build`
+- production env ile `docker compose config`
+- `product-service` için Jib smoke build
+
+Opsiyonel GHCR publish stage'i de vardır:
+
+- sadece `main` branch'te
+- `PUBLISH_IMAGES=true` parametresi verilirse
+- Jenkins credentials içinde `ghcr-credentials` adında `usernamePassword` credential tanımlıysa
+
+Beklenen agent araçları:
+
+- Java 21
+- Node.js 22
+- Docker / Docker Compose

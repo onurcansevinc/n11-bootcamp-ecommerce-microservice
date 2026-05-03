@@ -43,6 +43,18 @@ public class PaymentEntity {
 	@Column(nullable = false, updatable = false, length = 500)
 	private String checkoutUrl;
 
+	@Column(nullable = false, updatable = false)
+	private String buyerName;
+
+	@Column(nullable = false, updatable = false)
+	private String buyerSurname;
+
+	@Column(nullable = false, updatable = false)
+	private String buyerEmail;
+
+	@Column(nullable = false, updatable = false)
+	private String buyerGsmNumber;
+
 	@Column
 	private String failureReason;
 
@@ -64,7 +76,11 @@ public class PaymentEntity {
 			PaymentProvider provider,
 			BigDecimal amount,
 			String externalPaymentId,
-			String checkoutUrl
+			String checkoutUrl,
+			String buyerName,
+			String buyerSurname,
+			String buyerEmail,
+			String buyerGsmNumber
 	) {
 		this.id = UUID.randomUUID().toString();
 		this.orderId = orderId;
@@ -74,6 +90,10 @@ public class PaymentEntity {
 		this.amount = amount;
 		this.externalPaymentId = externalPaymentId;
 		this.checkoutUrl = checkoutUrl;
+		this.buyerName = buyerName;
+		this.buyerSurname = buyerSurname;
+		this.buyerEmail = buyerEmail;
+		this.buyerGsmNumber = buyerGsmNumber;
 	}
 
 	public void markSucceeded() {
@@ -134,6 +154,22 @@ public class PaymentEntity {
 
 	public String getFailureReason() {
 		return failureReason;
+	}
+
+	public String getBuyerName() {
+		return buyerName;
+	}
+
+	public String getBuyerSurname() {
+		return buyerSurname;
+	}
+
+	public String getBuyerEmail() {
+		return buyerEmail;
+	}
+
+	public String getBuyerGsmNumber() {
+		return buyerGsmNumber;
 	}
 
 	public LocalDateTime getCompletedAt() {

@@ -74,7 +74,11 @@ public class PaymentService {
 				request.provider(),
 				order.totalAmount(),
 				initiationResult.externalPaymentId(),
-				initiationResult.checkoutUrl()
+				initiationResult.checkoutUrl(),
+				request.checkout().buyer().name(),
+				request.checkout().buyer().surname(),
+				request.checkout().buyer().email(),
+				request.checkout().buyer().gsmNumber()
 		));
 
 		return PaymentResponse.from(persistedPayment);

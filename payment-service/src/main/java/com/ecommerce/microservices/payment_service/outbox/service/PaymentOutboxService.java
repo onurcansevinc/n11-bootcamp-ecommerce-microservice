@@ -55,6 +55,10 @@ public class PaymentOutboxService {
 						payment.getId(),
 						payment.getOrderId(),
 						payment.getCustomerId(),
+						payment.getBuyerName(),
+						payment.getBuyerSurname(),
+						payment.getBuyerEmail(),
+						payment.getBuyerGsmNumber(),
 						payment.getProvider().name(),
 						payment.getAmount()
 				)
@@ -69,6 +73,10 @@ public class PaymentOutboxService {
 						payment.getId(),
 						payment.getOrderId(),
 						payment.getCustomerId(),
+						payment.getBuyerName(),
+						payment.getBuyerSurname(),
+						payment.getBuyerEmail(),
+						payment.getBuyerGsmNumber(),
 						payment.getProvider().name(),
 						payment.getAmount(),
 						payment.getFailureReason()

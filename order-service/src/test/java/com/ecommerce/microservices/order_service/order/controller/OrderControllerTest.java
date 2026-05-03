@@ -11,6 +11,7 @@ import com.ecommerce.microservices.order_service.order.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -36,7 +37,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = OrderController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(
+		controllers = OrderController.class,
+		excludeAutoConfiguration = {
+				SecurityAutoConfiguration.class,
+				OAuth2ResourceServerAutoConfiguration.class
+		},
+		properties = {
+				"spring.cloud.config.enabled=false",
+				"spring.cloud.config.import-check.enabled=false",
+				"spring.cloud.discovery.enabled=false",
+				"eureka.client.enabled=false"
+		}
+)
 @Import(GlobalExceptionHandler.class)
 class OrderControllerTest {
 

@@ -2,6 +2,14 @@
 
 Spring Boot ve React tabanlı bu proje, tipik bir e-ticaret akışını mikroservis mimarisi ile böler. Katalog, stok, sepet, sipariş, ödeme, bildirim, kimlik doğrulama ve yapılandırma sorumlulukları birbirinden ayrılmıştır.
 
+## Canlı Ortam
+
+- Storefront: https://java-ecommerce.onurcansevinc.com
+- API health: https://java-ecommerce-api.onurcansevinc.com/actuator/health
+- Keycloak realm: https://java-ecommerce-auth.onurcansevinc.com/realms/ecommerce
+
+Demo kullanıcı akışı ve örnek veriler için aşağıdaki `Seed Data ve Demo` bölümüne bakılabilir.
+
 ## Modüller
 
 | Modül | Rol | Doküman |

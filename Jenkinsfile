@@ -54,7 +54,7 @@ pipeline {
 
         stage('Jib Smoke Build') {
             steps {
-                sh './mvnw -pl product-service -am -Dmaven.test.skip=true package com.google.cloud.tools:jib-maven-plugin:3.4.6:buildTar'
+                sh './mvnw -pl product-service -am -Dmaven.test.skip=true -Djib.containerize=:product-service package com.google.cloud.tools:jib-maven-plugin:3.4.6:buildTar'
                 sh 'test -f product-service/target/jib-image.tar'
             }
         }
@@ -86,7 +86,7 @@ pipeline {
                           config-server \
                           discovery-server
                         do
-                          ./mvnw -pl "$module" -am -Dmaven.test.skip=true package \
+                          ./mvnw -pl "$module" -am -Dmaven.test.skip=true -Djib.containerize=":$module" package \
                             com.google.cloud.tools:jib-maven-plugin:3.4.6:build \
                             -Djib.to.image="$GHCR_NAMESPACE/java-ecommerce-$module:$IMAGE_TAG" \
                             -Djib.to.tags=latest

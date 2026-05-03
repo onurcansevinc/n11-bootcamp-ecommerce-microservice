@@ -65,7 +65,7 @@ jobs:
 
       - name: Build and Publish Image
         run: |
-          ./mvnw -pl ${{ matrix.module }} -am -Dmaven.test.skip=true package \
+          ./mvnw -pl ${{ matrix.module }} -am -Dmaven.test.skip=true -Djib.containerize=:${{ matrix.module }} package \
             com.google.cloud.tools:jib-maven-plugin:3.4.6:build \
             -Djib.to.image=ghcr.io/${IMAGE_OWNER}/java-ecommerce-${{ matrix.image }}:${IMAGE_TAG} \
             -Djib.to.tags=latest

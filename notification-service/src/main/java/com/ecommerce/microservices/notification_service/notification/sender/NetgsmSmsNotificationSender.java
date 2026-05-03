@@ -6,6 +6,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+
 @Component
 public class NetgsmSmsNotificationSender implements SmsNotificationSender {
 
@@ -41,11 +43,12 @@ public class NetgsmSmsNotificationSender implements SmsNotificationSender {
 				.queryParam("gsmno", recipient)
 				.queryParam("message", content)
 				.queryParam("msgheader", msgHeader)
-				.build(true)
+				.encode()
+				.build()
 				.toUriString();
 
 		try {
-			String response = restTemplate.getForObject(requestUrl, String.class);
+			String response = restTemplate.getForObject(URI.create(requestUrl), String.class);
 			if (!isSuccessful(response)) {
 				throw new IllegalStateException("Netgsm SMS send failed with response: " + response);
 			}

@@ -1,5 +1,6 @@
 package com.ecommerce.microservices.common.web.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -80,6 +81,7 @@ public class ClientCredentialsAccessTokenProvider {
 		return new HttpEntity<>(body, headers);
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	private record TokenResponse(String access_token, Long expires_in) {
 		String accessToken() {
 			return access_token;

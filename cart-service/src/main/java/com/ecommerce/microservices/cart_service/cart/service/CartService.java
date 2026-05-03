@@ -16,6 +16,9 @@ import com.ecommerce.microservices.cart_service.catalog.dto.ProductSummary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CartService {
 
@@ -29,8 +32,7 @@ public class CartService {
 
 	@Transactional
 	public CartResponse createCart(String customerId) {
-		Cart cart = cartRepository.findByCustomerIdAndStatus(customerId, CartStatus.ACTIVE)
-				.orElseGet(() -> cartRepository.save(new Cart(customerId)));
+		Cart cart = resolveOrCreateActiveCart(customerId);
 
 		return CartResponse.from(cart);
 	}
@@ -78,6 +80,39 @@ public class CartService {
 
 		cart.removeItem(cartItem.getId());
 		cartRepository.save(cart);
+	}
+
+	private Cart resolveOrCreateActiveCart(String customerId) {
+		List<Cart> activeCarts = cartRepository.findAllByCustomerIdAndStatusOrderByUpdatedAtDesc(
+				customerId,
+				CartStatus.ACTIVE
+		);
+
+		if (activeCarts.isEmpty()) {
+			return cartRepository.save(new Cart(customerId));
+		}
+
+		if (activeCarts.size() == 1) {
+			return activeCarts.getFirst();
+		}
+
+		Cart primaryCart = activeCarts.getFirst();
+		List<Cart> duplicateCarts = new ArrayList<>(activeCarts.subList(1, activeCarts.size()));
+
+		for (Cart duplicateCart : duplicateCarts) {
+			for (CartItem duplicateItem : duplicateCart.getItemsOrderedById()) {
+				primaryCart.addOrIncrementItem(
+						duplicateItem.getProductId(),
+						duplicateItem.getProductName(),
+						duplicateItem.getUnitPrice(),
+						duplicateItem.getQuantity()
+				);
+			}
+		}
+
+		Cart savedPrimaryCart = cartRepository.save(primaryCart);
+		cartRepository.deleteAll(duplicateCarts);
+		return savedPrimaryCart;
 	}
 
 	private Cart getOwnedActiveCart(String cartId, String customerId) {

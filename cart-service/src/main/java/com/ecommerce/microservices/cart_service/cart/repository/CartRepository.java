@@ -5,6 +5,7 @@ import com.ecommerce.microservices.cart_service.cart.entity.CartStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CartRepository extends JpaRepository<Cart, String> {
@@ -15,4 +16,7 @@ public interface CartRepository extends JpaRepository<Cart, String> {
 
 	@EntityGraph(attributePaths = "items")
 	Optional<Cart> findByCustomerIdAndStatus(String customerId, CartStatus status);
+
+	@EntityGraph(attributePaths = "items")
+	List<Cart> findAllByCustomerIdAndStatusOrderByUpdatedAtDesc(String customerId, CartStatus status);
 }

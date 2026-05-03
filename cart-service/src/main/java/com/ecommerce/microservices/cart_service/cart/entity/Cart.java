@@ -12,6 +12,7 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,6 +25,9 @@ import java.util.UUID;
 @Entity
 @Table(
 		name = "carts",
+		uniqueConstraints = {
+				@UniqueConstraint(name = "uk_carts_customer_status", columnNames = {"customer_id", "status"})
+		},
 		indexes = {
 				@Index(name = "idx_carts_customer_id", columnList = "customer_id"),
 				@Index(name = "idx_carts_customer_status", columnList = "customer_id,status")

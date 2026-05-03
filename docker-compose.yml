@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${HOST_BIND_IP:-0.0.0.0}:${POSTGRES_PORT:-5432}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ecommerce-microservice}"]
       interval: 10s
@@ -25,7 +25,7 @@ services:
     container_name: ecommerce-redis
     restart: unless-stopped
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "${HOST_BIND_IP:-0.0.0.0}:${REDIS_PORT:-6379}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -47,7 +47,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HEALTH_ENABLED: "true"
     ports:
-      - "${KEYCLOAK_PORT:-8080}:8080"
+      - "${HOST_BIND_IP:-0.0.0.0}:${KEYCLOAK_PORT:-8080}:8080"
     volumes:
       - ./keycloak/import:/opt/keycloak/data/import:ro
     networks:
@@ -61,8 +61,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
     ports:
-      - "${RABBITMQ_PORT:-5672}:5672"
-      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+      - "${HOST_BIND_IP:-0.0.0.0}:${RABBITMQ_PORT:-5672}:5672"
+      - "${HOST_BIND_IP:-0.0.0.0}:${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
       interval: 10s
@@ -79,8 +79,8 @@ services:
     container_name: ecommerce-mailhog
     restart: unless-stopped
     ports:
-      - "${MAILHOG_SMTP_PORT:-1025}:1025"
-      - "${MAILHOG_UI_PORT:-8025}:8025"
+      - "${HOST_BIND_IP:-0.0.0.0}:${MAILHOG_SMTP_PORT:-1025}:1025"
+      - "${HOST_BIND_IP:-0.0.0.0}:${MAILHOG_UI_PORT:-8025}:8025"
     networks:
       - ecommerce-network
 

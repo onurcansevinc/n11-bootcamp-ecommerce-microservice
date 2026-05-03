@@ -41,3 +41,4 @@ nbdist/
 # VS Code
 .vscode/
 .env
+.m2/

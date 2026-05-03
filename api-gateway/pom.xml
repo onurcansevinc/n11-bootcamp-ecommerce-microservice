@@ -29,6 +29,9 @@
 	<properties>
 		<java.version>21</java.version>
 		<spring-cloud.version>2025.0.2</spring-cloud.version>
+		<jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
+		<jib.from.image>eclipse-temurin:21-jre-jammy</jib.from.image>
+		<jib.to.image>java-ecommerce/${project.artifactId}:local</jib.to.image>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -84,6 +87,28 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>${jib-maven-plugin.version}</version>
+				<configuration>
+					<from>
+						<image>${jib.from.image}</image>
+					</from>
+					<to>
+						<image>${jib.to.image}</image>
+					</to>
+					<container>
+						<mainClass>com.ecommerce.microservices.api_gateway.ApiGatewayApplication</mainClass>
+						<ports>
+							<port>8760</port>
+						</ports>
+						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+						<format>OCI</format>
+					</container>
+					<containerizingMode>packaged</containerizingMode>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

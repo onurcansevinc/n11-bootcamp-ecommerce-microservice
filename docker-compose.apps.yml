@@ -26,7 +26,7 @@ services:
       EUREKA_HOSTNAME: ${EUREKA_HOSTNAME:-discovery-server}
       CONFIG_ENABLED: "false"
     ports:
-      - "${DISCOVERY_SERVER_PORT:-8761}:8761"
+      - "${HOST_BIND_IP:-0.0.0.0}:${DISCOVERY_SERVER_PORT:-8761}:8761"
 
   config-server:
     <<: *app-common
@@ -44,7 +44,7 @@ services:
       CONFIG_SERVER_HOSTNAME: ${CONFIG_SERVER_HOSTNAME:-config-server}
       EUREKA_URI: ${EUREKA_URI:-http://discovery-server:8761/eureka}
     ports:
-      - "${CONFIG_SERVER_PORT:-8762}:8762"
+      - "${HOST_BIND_IP:-0.0.0.0}:${CONFIG_SERVER_PORT:-8762}:8762"
 
   product-service:
     <<: *app-common
@@ -82,7 +82,7 @@ services:
       KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI:-http://keycloak.localhost:8080/realms/ecommerce}
       JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
     ports:
-      - "${PRODUCT_SERVICE_PORT:-8763}:8763"
+      - "${HOST_BIND_IP:-0.0.0.0}:${PRODUCT_SERVICE_PORT:-8763}:8763"
 
   inventory-service:
     <<: *app-common
@@ -114,7 +114,7 @@ services:
       JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
       INVENTORY_RESERVATION_TTL: ${INVENTORY_RESERVATION_TTL:-15m}
     ports:
-      - "${INVENTORY_SERVICE_PORT:-8764}:8764"
+      - "${HOST_BIND_IP:-0.0.0.0}:${INVENTORY_SERVICE_PORT:-8764}:8764"
 
   cart-service:
     <<: *app-common
@@ -145,7 +145,7 @@ services:
       KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI:-http://keycloak.localhost:8080/realms/ecommerce}
       JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
     ports:
-      - "${CART_SERVICE_PORT:-8765}:8765"
+      - "${HOST_BIND_IP:-0.0.0.0}:${CART_SERVICE_PORT:-8765}:8765"
 
   order-service:
     <<: *app-common
@@ -192,7 +192,7 @@ services:
       ORDER_PAYMENT_EVENT_RETRY_MAX_INTERVAL_MS: ${ORDER_PAYMENT_EVENT_RETRY_MAX_INTERVAL_MS:-10000}
       JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
     ports:
-      - "${ORDER_SERVICE_PORT:-8766}:8766"
+      - "${HOST_BIND_IP:-0.0.0.0}:${ORDER_SERVICE_PORT:-8766}:8766"
 
   payment-service:
     <<: *app-common
@@ -241,7 +241,7 @@ services:
       PAYMENT_RESULT_URL: ${PAYMENT_RESULT_URL:-http://storefront.localhost:4173/payment/result}
       JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
     ports:
-      - "${PAYMENT_SERVICE_PORT:-8767}:8767"
+      - "${HOST_BIND_IP:-0.0.0.0}:${PAYMENT_SERVICE_PORT:-8767}:8767"
 
   notification-service:
     <<: *app-common
@@ -295,7 +295,7 @@ services:
       NETGSM_MSG_HEADER: ${NETGSM_MSG_HEADER:-TEST}
       JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
     ports:
-      - "${NOTIFICATION_SERVICE_PORT:-8768}:8768"
+      - "${HOST_BIND_IP:-0.0.0.0}:${NOTIFICATION_SERVICE_PORT:-8768}:8768"
 
   api-gateway:
     <<: *app-common
@@ -324,7 +324,7 @@ services:
       GATEWAY_RATE_LIMIT_REPLENISH_RATE: ${GATEWAY_RATE_LIMIT_REPLENISH_RATE:-20}
       GATEWAY_RATE_LIMIT_BURST_CAPACITY: ${GATEWAY_RATE_LIMIT_BURST_CAPACITY:-40}
     ports:
-      - "${API_GATEWAY_PORT:-8760}:8760"
+      - "${HOST_BIND_IP:-0.0.0.0}:${API_GATEWAY_PORT:-8760}:8760"
 
   storefront:
     restart: unless-stopped
@@ -344,7 +344,7 @@ services:
     networks:
       - ecommerce-network
     ports:
-      - "${STOREFRONT_PORT:-4173}:80"
+      - "${HOST_BIND_IP:-0.0.0.0}:${STOREFRONT_PORT:-4173}:80"
 
 networks:
   ecommerce-network:

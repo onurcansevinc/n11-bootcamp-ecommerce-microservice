@@ -19,8 +19,8 @@ export default function CartPanel({
       <aside className="side-sheet cart-sheet" onClick={(event) => event.stopPropagation()}>
         <header className="sheet-header">
           <div>
-            <small>Aktif Sepet</small>
-            <h2>Sepet Ozeti</h2>
+            <small>Sepetim</small>
+            <h2>Sepet Detayı</h2>
           </div>
           <button type="button" onClick={onClose}>
             Kapat
@@ -29,8 +29,8 @@ export default function CartPanel({
 
         {!items.length ? (
           <div className="empty-state">
-            <strong>Sepetin su an bos.</strong>
-            <p>Urun kartlarindan hizli ekleme yaparak akisi baslat.</p>
+            <strong>Sepetinde urun yok.</strong>
+            <p>Ürünleri sepete ekleyerek alışverişe başlayabilirsin.</p>
           </div>
         ) : (
           <>
@@ -66,7 +66,7 @@ export default function CartPanel({
                 <strong>{formatPrice(cart.totalAmount)}</strong>
               </div>
               <button type="button" className="primary-button" onClick={onCheckout}>
-                Siparis ve Odeme
+                Siparişi Tamamla
               </button>
             </footer>
           </>

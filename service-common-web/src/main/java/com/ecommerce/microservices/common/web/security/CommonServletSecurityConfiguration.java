@@ -21,4 +21,9 @@ public class CommonServletSecurityConfiguration {
     KeycloakJwtAuthoritiesConverter keycloakJwtAuthoritiesConverter() {
         return new KeycloakJwtAuthoritiesConverter();
     }
+
+    @Bean
+    CurrentCustomerIdResolver currentCustomerIdResolver() {
+        return new CurrentCustomerIdResolver();
+    }
 }

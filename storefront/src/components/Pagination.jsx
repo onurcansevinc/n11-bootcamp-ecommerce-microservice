@@ -8,7 +8,7 @@ export default function Pagination({ meta, onPageChange }) {
   return (
     <nav className="pagination-bar" aria-label="Sayfalama">
       <button type="button" disabled={!meta.hasPrevious} onClick={() => onPageChange(meta.page - 1)}>
-        Onceki
+        Önceki
       </button>
 
       <div className="pagination-summary">

@@ -2,6 +2,7 @@ package com.ecommerce.microservices.order_service.order.controller;
 
 import com.ecommerce.microservices.common.web.response.ApiResponse;
 import com.ecommerce.microservices.common.web.response.ResponseMeta;
+import com.ecommerce.microservices.common.web.security.CurrentCustomerIdResolver;
 import com.ecommerce.microservices.order_service.order.dto.CreateOrderRequest;
 import com.ecommerce.microservices.order_service.order.dto.OrderResponse;
 import com.ecommerce.microservices.order_service.order.service.OrderService;
@@ -34,9 +35,11 @@ import java.util.List;
 public class OrderController {
 
 	private final OrderService orderService;
+	private final CurrentCustomerIdResolver currentCustomerIdResolver;
 
-	public OrderController(OrderService orderService) {
+	public OrderController(OrderService orderService, CurrentCustomerIdResolver currentCustomerIdResolver) {
 		this.orderService = orderService;
+		this.currentCustomerIdResolver = currentCustomerIdResolver;
 	}
 
 	@PostMapping
@@ -84,7 +87,7 @@ public class OrderController {
 	}
 
 	private String currentCustomerId(JwtAuthenticationToken authentication) {
-		return authentication.getToken().getSubject();
+		return currentCustomerIdResolver.resolve(authentication);
 	}
 
 	private String bearerToken(JwtAuthenticationToken authentication) {

@@ -5,6 +5,7 @@ import com.ecommerce.microservices.cart_service.cart.dto.CreateCartItemRequest;
 import com.ecommerce.microservices.cart_service.cart.dto.UpdateCartItemRequest;
 import com.ecommerce.microservices.cart_service.cart.service.CartService;
 import com.ecommerce.microservices.common.web.response.ApiResponse;
+import com.ecommerce.microservices.common.web.security.CurrentCustomerIdResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,9 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class CartController {
 
 	private final CartService cartService;
+	private final CurrentCustomerIdResolver currentCustomerIdResolver;
 
-	public CartController(CartService cartService) {
+	public CartController(CartService cartService, CurrentCustomerIdResolver currentCustomerIdResolver) {
 		this.cartService = cartService;
+		this.currentCustomerIdResolver = currentCustomerIdResolver;
 	}
 
 	@PostMapping
@@ -94,7 +97,7 @@ public class CartController {
 	}
 
 	private String currentCustomerId(JwtAuthenticationToken authentication) {
-		return authentication.getToken().getSubject();
+		return currentCustomerIdResolver.resolve(authentication);
 	}
 
 }

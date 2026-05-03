@@ -6,7 +6,7 @@ export default function CategoryRail({ categories, selectedCategoryId, onSelectC
         className={selectedCategoryId ? "category-pill" : "category-pill active"}
         onClick={() => onSelectCategory(null)}
       >
-        Tum Firsatlar
+        Tüm Fırsatlar
       </button>
 
       {categories.map((category) => (

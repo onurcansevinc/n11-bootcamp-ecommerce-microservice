@@ -8,10 +8,12 @@ import com.ecommerce.microservices.product_service.product.dto.ProductPatchReque
 import com.ecommerce.microservices.product_service.product.dto.ProductResponse;
 import com.ecommerce.microservices.product_service.product.dto.ProductUpsertRequest;
 import com.ecommerce.microservices.product_service.product.entity.Product;
+import com.ecommerce.microservices.product_service.product.entity.ProductImage;
 import com.ecommerce.microservices.product_service.product.exception.DuplicateProductSkuException;
 import com.ecommerce.microservices.product_service.product.exception.InvalidProductFilterException;
 import com.ecommerce.microservices.product_service.product.exception.InvalidProductPatchException;
 import com.ecommerce.microservices.product_service.product.exception.ProductNotFoundException;
+import com.ecommerce.microservices.product_service.product.repository.ProductImageRepository;
 import com.ecommerce.microservices.product_service.product.repository.ProductRepository;
 import com.ecommerce.microservices.product_service.product.repository.specification.ProductSpecifications;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,15 +27,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final ProductImageRepository productImageRepository;
 
-    public ProductService(CategoryRepository categoryRepository, ProductRepository productRepository) {
+    public ProductService(
+            CategoryRepository categoryRepository,
+            ProductRepository productRepository,
+            ProductImageRepository productImageRepository
+    ) {
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
+        this.productImageRepository = productImageRepository;
     }
 
     @Transactional(readOnly = true)
@@ -55,11 +66,10 @@ public class ProductService {
                 .and(ProductSpecifications.priceGreaterThanOrEqual(minPrice))
                 .and(ProductSpecifications.priceLessThanOrEqual(maxPrice));
 
-        return productRepository.findAll(
-                        specification,
-                        pageRequest
-                )
-                .map(ProductResponse::from);
+        Page<Product> productPage = productRepository.findAll(specification, pageRequest);
+        Map<Long, String> mainImageUrls = getMainImageUrls(productPage.getContent());
+
+        return productPage.map(product -> ProductResponse.from(product, mainImageUrls.get(product.getId())));
     }
 
     @Transactional
@@ -77,7 +87,8 @@ public class ProductService {
                 category
         );
 
-        return ProductResponse.from(productRepository.save(product));
+        Product savedProduct = productRepository.save(product);
+        return ProductResponse.from(savedProduct, null);
     }
 
     @Transactional
@@ -96,7 +107,8 @@ public class ProductService {
                 category
         );
 
-        return ProductResponse.from(productRepository.save(product));
+        Product savedProduct = productRepository.save(product);
+        return ProductResponse.from(savedProduct, getMainImageUrl(savedProduct.getId()));
     }
 
     @Transactional
@@ -124,7 +136,8 @@ public class ProductService {
                 category
         );
 
-        return ProductResponse.from(productRepository.save(product));
+        Product savedProduct = productRepository.save(product);
+        return ProductResponse.from(savedProduct, getMainImageUrl(savedProduct.getId()));
     }
 
     @Transactional
@@ -137,7 +150,31 @@ public class ProductService {
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = CacheNames.PRODUCT_BY_ID, key = "#productId")
     public ProductResponse getProductById(Long productId) {
-        return ProductResponse.from(getProductByIdInternal(productId));
+        Product product = getProductByIdInternal(productId);
+        return ProductResponse.from(product, getMainImageUrl(productId));
+    }
+
+    private Map<Long, String> getMainImageUrls(List<Product> products) {
+        if (products.isEmpty()) {
+            return Map.of();
+        }
+
+        List<Long> productIds = products.stream()
+                .map(Product::getId)
+                .toList();
+
+        Map<Long, String> mainImageUrls = new LinkedHashMap<>();
+        for (ProductImage productImage : productImageRepository.findByProductIdInOrderByProductIdAscMainImageDescIdAsc(productIds)) {
+            mainImageUrls.putIfAbsent(productImage.getProduct().getId(), productImage.getImageUrl());
+        }
+
+        return mainImageUrls;
+    }
+
+    private String getMainImageUrl(Long productId) {
+        return productImageRepository.findFirstByProductIdOrderByMainImageDescIdAsc(productId)
+                .map(ProductImage::getImageUrl)
+                .orElse(null);
     }
 
     private void validatePriceRange(BigDecimal minPrice, BigDecimal maxPrice) {

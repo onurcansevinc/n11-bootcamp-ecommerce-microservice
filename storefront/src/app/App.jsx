@@ -10,7 +10,7 @@ export default function App() {
     return (
       <div className="app-shell loading-shell">
         <div className="loading-orb" />
-        <p>Magaza deneyimi hazirlaniyor...</p>
+        <p>Magaza yukleniyor...</p>
       </div>
     );
   }

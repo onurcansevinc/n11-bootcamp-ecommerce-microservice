@@ -14,8 +14,8 @@ export default function ProductGrid({ products, loading, onQuickView, onAddToCar
   if (!products.length) {
     return (
       <div className="empty-state">
-        <strong>Filtreye uygun urun bulunamadi.</strong>
-        <p>Aramayi sadeleştir veya kategori secimini sifirla.</p>
+        <strong>Bu filtreye uygun ürün bulunamadı.</strong>
+        <p>Aramanı değiştir veya başka bir kategori seç.</p>
       </div>
     );
   }

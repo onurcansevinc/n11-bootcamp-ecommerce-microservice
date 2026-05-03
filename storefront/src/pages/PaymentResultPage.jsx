@@ -11,32 +11,32 @@ export default function PaymentResultPage() {
   return (
     <main className="result-page">
       <section className={isSuccess ? "result-card success" : "result-card warning"}>
-        <small>Odeme Sonucu</small>
-        <h1>{isSuccess ? "Odemeniz alindi" : "Odeme beklemede ya da basarisiz"}</h1>
+        <small>Ödeme Sonucu</small>
+        <h1>{isSuccess ? "Ödeme alındı" : "Ödeme tamamlanmadı"}</h1>
         <p>
           {isSuccess
-            ? "Siparisiniz kayda alindi. Bildirimler event akisi uzerinden gonderilecek."
-            : "Durumu hesap panelinden veya odeme kayitlarindan takip edebilirsin."}
+            ? "Siparişin kayda alındı. Durumu Hesabım alanından takip edebilirsin."
+            : "Ödeme durumunu Hesabım alanındaki ödeme kayıtlarından kontrol edebilirsin."}
         </p>
 
         <dl className="detail-list result-details">
           <div>
-            <dt>Payment ID</dt>
+            <dt>Ödeme No</dt>
             <dd>{paymentId ?? "-"}</dd>
           </div>
           <div>
-            <dt>Order ID</dt>
+            <dt>Sipariş No</dt>
             <dd>{orderId ?? "-"}</dd>
           </div>
           <div>
-            <dt>Status</dt>
+            <dt>Durum</dt>
             <dd>{status ?? "-"}</dd>
           </div>
         </dl>
 
         <div className="result-actions">
           <Link to="/" className="primary-button">
-            Vitrine Don
+            Ana Sayfaya Dön
           </Link>
         </div>
       </section>

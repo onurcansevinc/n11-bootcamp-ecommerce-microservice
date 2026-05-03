@@ -19,8 +19,8 @@ export default function AccountPanel({
       <aside className="side-sheet account-sheet" onClick={(event) => event.stopPropagation()}>
         <header className="sheet-header">
           <div>
-            <small>Hesabim</small>
-            <h2>Siparis ve Odeme Akisi</h2>
+            <small>Hesabım</small>
+            <h2>Siparişlerim ve Ödemelerim</h2>
           </div>
           <button type="button" onClick={onClose}>
             Kapat
@@ -29,13 +29,13 @@ export default function AccountPanel({
 
         {loading ? (
           <div className="empty-state">
-            <strong>Kayitlar yukleniyor...</strong>
+            <strong>Bilgiler yükleniyor...</strong>
           </div>
         ) : (
           <div className="account-columns">
             <section className="account-section">
               <div className="section-head">
-                <h3>Son Siparisler</h3>
+                <h3>Son Siparişler</h3>
               </div>
               {orders.length ? (
                 <div className="stack-list">
@@ -53,13 +53,13 @@ export default function AccountPanel({
                   ))}
                 </div>
               ) : (
-                <div className="empty-inline">Henuz siparis yok.</div>
+                <div className="empty-inline">Henüz siparişin yok.</div>
               )}
             </section>
 
             <section className="account-section">
               <div className="section-head">
-                <h3>Son Odemeler</h3>
+                <h3>Son Ödemeler</h3>
               </div>
               {payments.length ? (
                 <div className="stack-list">
@@ -78,15 +78,15 @@ export default function AccountPanel({
                       {payment.status === "PENDING" ? (
                         <div className="payment-actions">
                           <button type="button" onClick={() => onContinuePayment(payment)}>
-                            Odeme Ekranini Ac
+                            Ödeme Sayfasını Aç
                           </button>
                           {payment.provider === "PAYTR" ? (
                             <>
                               <button type="button" onClick={() => onSandboxSuccess(payment.id)}>
-                                Basarili Simule Et
+                                Başarılı Göster
                               </button>
                               <button type="button" onClick={() => onSandboxFailure(payment.id)}>
-                                Basarisiz Simule Et
+                                Başarısız Göster
                               </button>
                             </>
                           ) : null}
@@ -96,7 +96,7 @@ export default function AccountPanel({
                   ))}
                 </div>
               ) : (
-                <div className="empty-inline">Henuz odeme kaydi yok.</div>
+                <div className="empty-inline">Henüz ödeme kaydın yok.</div>
               )}
             </section>
           </div>

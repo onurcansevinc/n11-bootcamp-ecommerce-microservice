@@ -2,6 +2,7 @@ package com.ecommerce.microservices.payment_service.payment.controller;
 
 import com.ecommerce.microservices.common.web.response.ApiResponse;
 import com.ecommerce.microservices.common.web.response.ResponseMeta;
+import com.ecommerce.microservices.common.web.security.CurrentCustomerIdResolver;
 import com.ecommerce.microservices.payment_service.payment.dto.CreatePaymentRequest;
 import com.ecommerce.microservices.payment_service.payment.dto.PaymentResponse;
 import com.ecommerce.microservices.payment_service.payment.service.PaymentService;
@@ -38,13 +39,16 @@ import java.util.List;
 public class PaymentController {
 
 	private final PaymentService paymentService;
+	private final CurrentCustomerIdResolver currentCustomerIdResolver;
 	private final String paymentFrontendResultUrl;
 
 	public PaymentController(
 			PaymentService paymentService,
+			CurrentCustomerIdResolver currentCustomerIdResolver,
 			@Value("${payment.frontend-result-url:http://localhost:5173/payment/result}") String paymentFrontendResultUrl
 	) {
 		this.paymentService = paymentService;
+		this.currentCustomerIdResolver = currentCustomerIdResolver;
 		this.paymentFrontendResultUrl = paymentFrontendResultUrl;
 	}
 
@@ -134,7 +138,7 @@ public class PaymentController {
 	}
 
 	private String currentCustomerId(JwtAuthenticationToken authentication) {
-		return authentication.getToken().getSubject();
+		return currentCustomerIdResolver.resolve(authentication);
 	}
 
 	private String bearerToken(JwtAuthenticationToken authentication) {

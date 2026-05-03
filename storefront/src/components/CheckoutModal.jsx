@@ -1,8 +1,8 @@
 const addressFields = [
-  ["contactName", "Iletisim Adi"],
+  ["contactName", "İletişim Adı"],
   ["address", "Adres"],
-  ["city", "Sehir"],
-  ["country", "Ulke"],
+  ["city", "Şehir"],
+  ["country", "Ülke"],
   ["zipCode", "Posta Kodu"]
 ];
 
@@ -49,8 +49,8 @@ export default function CheckoutModal({
       <section className="modal-shell checkout-modal" onClick={(event) => event.stopPropagation()}>
         <header className="sheet-header">
           <div>
-            <small>Checkout</small>
-            <h2>Siparis ve Odeme Bilgileri</h2>
+            <small>Ödeme</small>
+            <h2>Teslimat ve Ödeme Bilgileri</h2>
           </div>
           <button type="button" onClick={onClose}>
             Kapat
@@ -60,7 +60,7 @@ export default function CheckoutModal({
         <div className="checkout-layout">
           <section className="form-card">
             <div className="section-head">
-              <h3>Odeme Saglayicisi</h3>
+              <h3>Ödeme Yöntemi</h3>
             </div>
 
             <div className="provider-switch">
@@ -71,7 +71,7 @@ export default function CheckoutModal({
                   className={checkoutDraft.provider === provider ? "provider-option active" : "provider-option"}
                   onClick={() => onDraftChange({ ...checkoutDraft, provider })}
                 >
-                  {provider === "IYZICO" ? "Iyzico Sandbox" : "PAYTR Demo"}
+                  {provider === "IYZICO" ? "Iyzico" : "PAYTR (Demo)"}
                 </button>
               ))}
             </div>
@@ -79,7 +79,7 @@ export default function CheckoutModal({
 
           <section className="form-card">
             <div className="section-head">
-              <h3>Alici Bilgileri</h3>
+              <h3>Müşteri Bilgileri</h3>
             </div>
 
             <div className="form-grid">
@@ -100,11 +100,11 @@ export default function CheckoutModal({
                 <input value={checkoutDraft.checkout.buyer.gsmNumber} onChange={(event) => updateBuyerField("gsmNumber", event.target.value)} />
               </label>
               <label>
-                T.C. Kimlik
+                T.C. Kimlik No
                 <input value={checkoutDraft.checkout.buyer.identityNumber} onChange={(event) => updateBuyerField("identityNumber", event.target.value)} />
               </label>
               <label>
-                Kayit Adresi
+                Kayıt Adresi
                 <input
                   value={checkoutDraft.checkout.buyer.registrationAddress}
                   onChange={(event) => updateBuyerField("registrationAddress", event.target.value)}
@@ -136,10 +136,10 @@ export default function CheckoutModal({
 
         <footer className="sheet-footer">
           <button type="button" className="secondary-button" onClick={onClose}>
-            Vazgec
+            Vazgeç
           </button>
           <button type="button" className="primary-button" disabled={submitting} onClick={onSubmit}>
-            {submitting ? "Hazirlaniyor..." : "Siparis Olustur ve Odeme Baslat"}
+            {submitting ? "Hazırlanıyor..." : "Siparişi Oluştur"}
           </button>
         </footer>
       </section>

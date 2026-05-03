@@ -9,17 +9,16 @@ export default function HeroSection({ products, onQuickView }) {
       <div className="hero-stage">
         <div className="hero-main-card">
           <div className="hero-copy">
-            <span className="hero-kicker">Super Firsatlar Koridoru</span>
-            <h1>Tek ekranda urun, sepet, siparis ve odeme akisi.</h1>
+            <span className="hero-kicker">Günün Fırsatları</span>
+            <h1>Aradığın ürünü bul, sepete ekle, ödemeyi tamamla.</h1>
             <p>
-              n11 ana sayfasindaki yogun marketplace ritmine yakin bir vitrin: buyuk kampanya
-              alani, coklu promosyon kutulari ve hizli urun gecisleri.
+              Kategori, arama ve kampanya kutularıyla hızlı alışveriş akışı tek sayfada.
             </p>
 
             <div className="hero-badges">
-              <span>Ayni gun sepet aksiyonu</span>
-              <span>Keycloak ile guvenli giris</span>
-              <span>Iyzico sandbox checkout</span>
+              <span>Hızlı alışveriş</span>
+              <span>Güvenli giriş</span>
+              <span>Sandbox ödeme</span>
             </div>
           </div>
 
@@ -28,9 +27,9 @@ export default function HeroSection({ products, onQuickView }) {
             className="hero-showcase"
             onClick={() => leadProduct && onQuickView(leadProduct.id)}
           >
-            <small>Gunluk One Cikan</small>
-            <strong>{leadProduct?.name ?? "Bugun vitrindeki urunler yenileniyor"}</strong>
-            <span>{leadProduct ? formatPrice(leadProduct.price) : "Kampanya bekleniyor"}</span>
+            <small>Bugünün önerisi</small>
+            <strong>{leadProduct?.name ?? "Öne çıkan ürünleri incele"}</strong>
+            <span>{leadProduct ? formatPrice(leadProduct.price) : "Avantajlı fiyatlar burada"}</span>
           </button>
         </div>
 
@@ -42,7 +41,7 @@ export default function HeroSection({ products, onQuickView }) {
               className="promo-tile"
               onClick={() => onQuickView(product.id)}
             >
-              <small>{product.category?.name ?? "One Cikan"}</small>
+              <small>{product.category?.name ?? "Önerilen Ürün"}</small>
               <strong>{product.name}</strong>
               <span>{formatPrice(product.price)}</span>
             </button>
@@ -52,32 +51,32 @@ export default function HeroSection({ products, onQuickView }) {
 
       <aside className="hero-sidebar">
         <div className="hero-sidebar-header">
-          <span>Hizli Koridorlar</span>
-          <strong>Alisveris rehberi</strong>
+          <span>Bugün neler var?</span>
+          <strong>Alışverişe hızlı başla</strong>
         </div>
 
         <div className="spotlight-stack">
           <article className="spotlight-card static-card">
             <span>01</span>
             <div>
-              <strong>Kupon ve kampanya vitrini</strong>
-              <small>n11 hissini veren yogun promosyon alani</small>
+              <strong>Kupon ve kampanyalar</strong>
+              <small>Günün fırsatlarını tek yerde gör</small>
             </div>
           </article>
 
           <article className="spotlight-card static-card">
             <span>02</span>
             <div>
-              <strong>Sepetten odemeye tek akis</strong>
-              <small>Cart, order, payment ve notification zinciri</small>
+              <strong>Sepetten siparişe</strong>
+              <small>Ürün ekle, sipariş ver, ödemeyi tamamla</small>
             </div>
           </article>
 
           <article className="spotlight-card static-card">
             <span>03</span>
             <div>
-              <strong>Demo odeme secenekleri</strong>
-              <small>Iyzico checkout ve PAYTR simulasyonu</small>
+              <strong>Ödeme seçenekleri</strong>
+              <small>Iyzico ve PAYTR demo akışı</small>
             </div>
           </article>
         </div>

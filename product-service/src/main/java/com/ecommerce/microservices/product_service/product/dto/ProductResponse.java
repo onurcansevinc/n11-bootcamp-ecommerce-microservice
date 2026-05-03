@@ -13,11 +13,12 @@ public record ProductResponse(
         BigDecimal price,
         String sku,
         Boolean active,
+        String mainImageUrl,
         CategorySummary category,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
-    public static ProductResponse from(Product product) {
+    public static ProductResponse from(Product product, String mainImageUrl) {
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
@@ -25,6 +26,7 @@ public record ProductResponse(
                 product.getPrice(),
                 product.getSku(),
                 product.getActive(),
+                mainImageUrl,
                 CategorySummary.from(product.getCategory()),
                 product.getCreatedAt(),
                 product.getUpdatedAt()

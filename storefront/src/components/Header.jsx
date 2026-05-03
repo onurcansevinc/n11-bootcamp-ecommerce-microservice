@@ -14,30 +14,12 @@ export default function Header({
     auth.user?.profile?.given_name ??
     auth.user?.profile?.preferred_username ??
     auth.user?.profile?.name ??
-    "Musteri";
+    "Misafir";
 
   const navigationItems = (categories ?? []).slice(0, 8);
 
   return (
     <header className="site-header">
-      <div className="utility-bar">
-        <div className="utility-meta">
-          <span>Magazana Ozel</span>
-          <span>Kupon ve Kampanyalar</span>
-          <span>Hizli Teslimat</span>
-        </div>
-        <div className="utility-links">
-          <button type="button">Yardim</button>
-          <button type="button">Siparis Takibi</button>
-          <button type="button" onClick={onAccountOpen}>
-            Siparislerim
-          </button>
-          <button type="button" onClick={onCartOpen}>
-            Sepetim
-          </button>
-        </div>
-      </div>
-
       <div className="header-main">
         <button
           type="button"
@@ -50,19 +32,19 @@ export default function Header({
           <span className="brand-badge">n11</span>
           <span className="brand-copy">
             <strong>Bootcamp Storefront</strong>
-            <small>Turuncu firsatlar, hizli sepet ve demo checkout</small>
+            <small>Ürün, sepet, sipariş ve ödeme akışı</small>
           </span>
         </button>
 
         <button type="button" className="category-hub" onClick={() => onSelectCategory(null)}>
           <strong>Kategoriler</strong>
-          <small>Tum urunler</small>
+          <small>Tüm kategoriler</small>
         </button>
 
         <form className="search-bar" onSubmit={onSearchSubmit}>
           <input
             type="search"
-            placeholder="Telefon, kulaklik, kahve makinesi, hediyelik..."
+            placeholder="Telefon, kulaklık, kahve makinesi, hediyelik..."
             value={searchInput}
             onChange={(event) => onSearchInputChange(event.target.value)}
           />
@@ -71,19 +53,19 @@ export default function Header({
 
         <div className="header-actions">
           <button type="button" className="ghost-chip action-chip" onClick={onAccountOpen}>
-            <small>Hesabim</small>
+            <small>Hesabım</small>
             <strong>{displayName}</strong>
           </button>
 
           {auth.isAuthenticated ? (
             <>
               <button type="button" className="ghost-chip" onClick={() => auth.signoutRedirect()}>
-                Cikis
+                Çıkış
               </button>
             </>
           ) : (
             <button type="button" className="primary-chip" onClick={() => auth.signinRedirect()}>
-              Giris Yap
+              Giriş Yap
             </button>
           )}
 
@@ -100,7 +82,7 @@ export default function Header({
           className={selectedCategoryId ? "nav-link" : "nav-link active"}
           onClick={() => onSelectCategory(null)}
         >
-          Tum Firsatlar
+          Tüm Kategoriler
         </button>
 
         {navigationItems.map((category) => (

@@ -27,8 +27,8 @@ import {
 } from "../lib/api";
 
 function createCheckoutDraft(profile) {
-  const givenName = profile?.given_name ?? profile?.name?.split(" ")?.[0] ?? "Customer";
-  const surname = profile?.family_name ?? profile?.name?.split(" ").slice(1).join(" ") ?? "User";
+  const givenName = profile?.given_name ?? profile?.name?.split(" ")?.[0] ?? "Misafir";
+  const surname = profile?.family_name ?? profile?.name?.split(" ").slice(1).join(" ") ?? "Kullanıcı";
   const email = profile?.email ?? "";
 
   return {
@@ -42,21 +42,21 @@ function createCheckoutDraft(profile) {
         gsmNumber: "905555555555",
         identityNumber: "11111111110",
         registrationAddress: "Maslak Mahallesi Buyukdere Caddesi No:1",
-        city: "Istanbul",
-        country: "Turkiye",
+        city: "İstanbul",
+        country: "Türkiye",
         zipCode: "34000"
       },
       billingAddress: {
         contactName: `${givenName} ${surname}`.trim(),
-        city: "Istanbul",
-        country: "Turkiye",
+        city: "İstanbul",
+        country: "Türkiye",
         address: "Maslak Mahallesi Buyukdere Caddesi No:1",
         zipCode: "34000"
       },
       shippingAddress: {
         contactName: `${givenName} ${surname}`.trim(),
-        city: "Istanbul",
-        country: "Turkiye",
+        city: "İstanbul",
+        country: "Türkiye",
         address: "Maslak Mahallesi Buyukdere Caddesi No:1",
         zipCode: "34000"
       }
@@ -297,7 +297,7 @@ export default function HomePage() {
       );
 
       const payment = paymentResponse.data;
-      setBannerMessage(`Odeme kaydi olusturuldu: ${payment.id}`);
+      setBannerMessage(`Ödeme kaydı oluşturuldu. Ödeme No: ${payment.id}`);
       setCheckoutOpen(false);
       await loadAccountData();
 
@@ -307,7 +307,7 @@ export default function HomePage() {
       }
 
       setAccountOpen(true);
-      setBannerMessage("PAYTR demo odemesi hazir. Hesap panelinden sonucu simule edebilirsin.");
+      setBannerMessage("PAYTR ödemesi hazır. Sonucu Hesabım alanından yönetebilirsin.");
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
@@ -317,12 +317,12 @@ export default function HomePage() {
 
   async function handleContinuePayment(payment) {
     if (!payment?.checkoutUrl) {
-      setErrorMessage("Bu odeme icin checkout linki bulunamadi.");
+      setErrorMessage("Bu ödeme için ödeme linki bulunamadı.");
       return;
     }
 
     if (payment.provider === "PAYTR") {
-      setBannerMessage("PAYTR demo odemeleri hesap panelindeki simulate butonlariyla tamamlanir.");
+      setBannerMessage("PAYTR ödemesini Hesabım alanındaki butonlarla sonuçlandırabilirsin.");
       return;
     }
 
@@ -336,7 +336,7 @@ export default function HomePage() {
 
     try {
       await simulatePaymentSuccess(paymentId, accessToken);
-      setBannerMessage("Sandbox odemesi basarili olarak isaretlendi.");
+      setBannerMessage("Ödeme başarılı olarak güncellendi.");
       await loadAccountData();
     } catch (error) {
       setErrorMessage(error.message);
@@ -350,7 +350,7 @@ export default function HomePage() {
 
     try {
       await simulatePaymentFailure(paymentId, accessToken);
-      setBannerMessage("Sandbox odemesi basarisiz olarak isaretlendi.");
+      setBannerMessage("Ödeme başarısız olarak güncellendi.");
       await loadAccountData();
     } catch (error) {
       setErrorMessage(error.message);
@@ -420,11 +420,11 @@ export default function HomePage() {
         <section className="section-block">
           <div className="section-head">
             <div>
-              <small>One Cikanlar</small>
-              <h2>Gunluk alisveris vitrini</h2>
+              <small>Ürünler</small>
+              <h2>Öne çıkan ürünler</h2>
             </div>
             <p>
-              Arama, kategori ve pagination ile canli katalog akisina bagli marketplace urun kartlari.
+              Arama, kategori ve sayfalama ile canlı katalog deneyimi.
             </p>
           </div>
 

@@ -10,7 +10,7 @@ export default function ProductQuickView({ product, open, onClose, onAddToCart }
       <section className="side-sheet quick-view-sheet" onClick={(event) => event.stopPropagation()}>
         <header className="sheet-header">
           <div>
-            <small>Urun Detayi</small>
+            <small>Ürün Bilgisi</small>
             <h2>{product.name}</h2>
           </div>
           <button type="button" onClick={onClose}>
@@ -20,7 +20,10 @@ export default function ProductQuickView({ product, open, onClose, onAddToCart }
 
         <div className="quick-view-body">
           <div className="quick-view-visual">
-            <span>{product.category?.name ?? "Urun"}</span>
+            {product.mainImageUrl ? (
+              <img className="quick-view-image" src={product.mainImageUrl} alt={product.name} loading="lazy" />
+            ) : null}
+            <span>{product.category?.name ?? "Ürün"}</span>
             <strong>{product.sku}</strong>
           </div>
 
@@ -40,21 +43,20 @@ export default function ProductQuickView({ product, open, onClose, onAddToCart }
                 <dd>{product.sku}</dd>
               </div>
               <div>
-                <dt>Guncelleme</dt>
+                <dt>Güncelleme</dt>
                 <dd>{formatDate(product.updatedAt)}</dd>
               </div>
             </dl>
 
             <div className="detail-note">
-              Canli stok verisi musteri scope'u ile acik olmadigi icin urun kartinda gizli tutuluyor.
-              Stok dogrulamasi checkout sirasinda yapiliyor.
+              Stok bilgisi bu ekranda gösterilmiyor. Kontrol sipariş aşamasında yapılıyor.
             </div>
           </div>
         </div>
 
         <footer className="sheet-footer">
           <button type="button" className="secondary-button" onClick={onClose}>
-            Vitrine Don
+            Geri Dön
           </button>
           <button type="button" className="primary-button" onClick={() => onAddToCart(product)}>
             Sepete Ekle

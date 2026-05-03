@@ -1,0 +1,351 @@
+x-app-common: &app-common
+  restart: unless-stopped
+  networks:
+    - ecommerce-network
+  extra_hosts:
+    - "${KEYCLOAK_HOSTNAME:-keycloak.localhost}:host-gateway"
+
+services:
+  keycloak:
+    environment:
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-keycloak.localhost}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY_HEADERS: ${KEYCLOAK_PROXY_HEADERS:-xforwarded}
+
+  discovery-server:
+    <<: *app-common
+    container_name: ecommerce-discovery-server
+    build:
+      context: .
+      dockerfile: Dockerfile.spring
+      args:
+        MODULE: discovery-server
+    environment:
+      DISCOVERY_SERVER_PORT: ${DISCOVERY_SERVER_PORT:-8761}
+      EUREKA_HOSTNAME: ${EUREKA_HOSTNAME:-discovery-server}
+      CONFIG_ENABLED: "false"
+    ports:
+      - "${DISCOVERY_SERVER_PORT:-8761}:8761"
+
+  config-server:
+    <<: *app-common
+    container_name: ecommerce-config-server
+    build:
+      context: .
+      dockerfile: Dockerfile.spring
+      args:
+        MODULE: config-server
+    depends_on:
+      discovery-server:
+        condition: service_started
+    environment:
+      CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT:-8762}
+      CONFIG_SERVER_HOSTNAME: ${CONFIG_SERVER_HOSTNAME:-config-server}
+      EUREKA_URI: ${EUREKA_URI:-http://discovery-server:8761/eureka}
+    ports:
+      - "${CONFIG_SERVER_PORT:-8762}:8762"
+
+  product-service:
+    <<: *app-common
+    container_name: ecommerce-product-service
+    build:
+      context: .
+      dockerfile: Dockerfile.spring
+      args:
+        MODULE: product-service
+    depends_on:
+      config-server:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    environment:
+      PRODUCT_SERVICE_PORT: ${PRODUCT_SERVICE_PORT:-8763}
+      CONFIG_URI: ${CONFIG_URI:-http://config-server:8762}
+      EUREKA_URI: ${EUREKA_URI:-http://discovery-server:8761/eureka}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-ecommerce-microservice}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_DATABASE: ${REDIS_DATABASE:-0}
+      REDIS_TIMEOUT: ${REDIS_TIMEOUT:-2s}
+      REDIS_CONNECT_TIMEOUT: ${REDIS_CONNECT_TIMEOUT:-2s}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI:-http://keycloak.localhost:8080/realms/ecommerce}
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
+    ports:
+      - "${PRODUCT_SERVICE_PORT:-8763}:8763"
+
+  inventory-service:
+    <<: *app-common
+    container_name: ecommerce-inventory-service
+    build:
+      context: .
+      dockerfile: Dockerfile.spring
+      args:
+        MODULE: inventory-service
+    depends_on:
+      config-server:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    environment:
+      INVENTORY_SERVICE_PORT: ${INVENTORY_SERVICE_PORT:-8764}
+      CONFIG_URI: ${CONFIG_URI:-http://config-server:8762}
+      EUREKA_URI: ${EUREKA_URI:-http://discovery-server:8761/eureka}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-ecommerce-microservice}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI:-http://keycloak.localhost:8080/realms/ecommerce}
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
+      INVENTORY_RESERVATION_TTL: ${INVENTORY_RESERVATION_TTL:-15m}
+    ports:
+      - "${INVENTORY_SERVICE_PORT:-8764}:8764"
+
+  cart-service:
+    <<: *app-common
+    container_name: ecommerce-cart-service
+    build:
+      context: .
+      dockerfile: Dockerfile.spring
+      args:
+        MODULE: cart-service
+    depends_on:
+      config-server:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    environment:
+      CART_SERVICE_PORT: ${CART_SERVICE_PORT:-8765}
+      CONFIG_URI: ${CONFIG_URI:-http://config-server:8762}
+      EUREKA_URI: ${EUREKA_URI:-http://discovery-server:8761/eureka}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-ecommerce-microservice}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI:-http://keycloak.localhost:8080/realms/ecommerce}
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
+    ports:
+      - "${CART_SERVICE_PORT:-8765}:8765"
+
+  order-service:
+    <<: *app-common
+    container_name: ecommerce-order-service
+    build:
+      context: .
+      dockerfile: Dockerfile.spring
+      args:
+        MODULE: order-service
+    depends_on:
+      config-server:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    environment:
+      ORDER_SERVICE_PORT: ${ORDER_SERVICE_PORT:-8766}
+      CONFIG_URI: ${CONFIG_URI:-http://config-server:8762}
+      EUREKA_URI: ${EUREKA_URI:-http://discovery-server:8761/eureka}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-ecommerce-microservice}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI:-http://keycloak.localhost:8080/realms/ecommerce}
+      KEYCLOAK_TOKEN_URI: ${KEYCLOAK_TOKEN_URI:-http://keycloak.localhost:8080/realms/ecommerce/protocol/openid-connect/token}
+      INTERNAL_SERVICE_CLIENT_ID: ${INTERNAL_SERVICE_CLIENT_ID:-service-internal}
+      INTERNAL_SERVICE_CLIENT_SECRET: ${INTERNAL_SERVICE_CLIENT_SECRET}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      PAYMENT_EVENTS_EXCHANGE: ${PAYMENT_EVENTS_EXCHANGE:-payment.events}
+      PAYMENT_EVENTS_DLX: ${PAYMENT_EVENTS_DLX:-payment.events.dlx}
+      ORDER_PAYMENT_EVENTS_QUEUE: ${ORDER_PAYMENT_EVENTS_QUEUE:-order.payment-events.v1}
+      ORDER_PAYMENT_EVENTS_DLQ: ${ORDER_PAYMENT_EVENTS_DLQ:-order.payment-events.dlq.v1}
+      ORDER_PAYMENT_EVENT_MAX_ATTEMPTS: ${ORDER_PAYMENT_EVENT_MAX_ATTEMPTS:-3}
+      ORDER_PAYMENT_EVENT_RETRY_INITIAL_INTERVAL_MS: ${ORDER_PAYMENT_EVENT_RETRY_INITIAL_INTERVAL_MS:-1000}
+      ORDER_PAYMENT_EVENT_RETRY_MAX_INTERVAL_MS: ${ORDER_PAYMENT_EVENT_RETRY_MAX_INTERVAL_MS:-10000}
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
+    ports:
+      - "${ORDER_SERVICE_PORT:-8766}:8766"
+
+  payment-service:
+    <<: *app-common
+    container_name: ecommerce-payment-service
+    build:
+      context: .
+      dockerfile: Dockerfile.spring
+      args:
+        MODULE: payment-service
+    depends_on:
+      config-server:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    environment:
+      PAYMENT_SERVICE_PORT: ${PAYMENT_SERVICE_PORT:-8767}
+      CONFIG_URI: ${CONFIG_URI:-http://config-server:8762}
+      EUREKA_URI: ${EUREKA_URI:-http://discovery-server:8761/eureka}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-ecommerce-microservice}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI:-http://keycloak.localhost:8080/realms/ecommerce}
+      KEYCLOAK_TOKEN_URI: ${KEYCLOAK_TOKEN_URI:-http://keycloak.localhost:8080/realms/ecommerce/protocol/openid-connect/token}
+      INTERNAL_SERVICE_CLIENT_ID: ${INTERNAL_SERVICE_CLIENT_ID:-service-internal}
+      INTERNAL_SERVICE_CLIENT_SECRET: ${INTERNAL_SERVICE_CLIENT_SECRET}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      PAYMENT_EVENTS_EXCHANGE: ${PAYMENT_EVENTS_EXCHANGE:-payment.events}
+      PAYMENT_EVENTS_DLX: ${PAYMENT_EVENTS_DLX:-payment.events.dlx}
+      PAYMENT_OUTBOX_PUBLISH_DELAY_MS: ${PAYMENT_OUTBOX_PUBLISH_DELAY_MS:-5000}
+      PAYMENT_OUTBOX_BATCH_SIZE: ${PAYMENT_OUTBOX_BATCH_SIZE:-50}
+      IYZICO_API_KEY: ${IYZICO_API_KEY:-sandbox-api-key}
+      IYZICO_SECRET_KEY: ${IYZICO_SECRET_KEY:-sandbox-secret-key}
+      IYZICO_BASE_URL: ${IYZICO_BASE_URL:-https://sandbox-api.iyzipay.com}
+      IYZICO_CALLBACK_URL: ${IYZICO_CALLBACK_URL:-http://localhost:8767/api/v1/payments/iyzico/callback}
+      PAYMENT_RESULT_URL: ${PAYMENT_RESULT_URL:-http://storefront.localhost:4173/payment/result}
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
+    ports:
+      - "${PAYMENT_SERVICE_PORT:-8767}:8767"
+
+  notification-service:
+    <<: *app-common
+    container_name: ecommerce-notification-service
+    build:
+      context: .
+      dockerfile: Dockerfile.spring
+      args:
+        MODULE: notification-service
+    depends_on:
+      config-server:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+    environment:
+      NOTIFICATION_SERVICE_PORT: ${NOTIFICATION_SERVICE_PORT:-8768}
+      CONFIG_URI: ${CONFIG_URI:-http://config-server:8762}
+      EUREKA_URI: ${EUREKA_URI:-http://discovery-server:8761/eureka}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-ecommerce-microservice}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      PAYMENT_EVENTS_EXCHANGE: ${PAYMENT_EVENTS_EXCHANGE:-payment.events}
+      PAYMENT_EVENTS_DLX: ${PAYMENT_EVENTS_DLX:-payment.events.dlx}
+      NOTIFICATION_PAYMENT_EVENTS_QUEUE: ${NOTIFICATION_PAYMENT_EVENTS_QUEUE:-notification.payment-events.v1}
+      NOTIFICATION_PAYMENT_EVENTS_DLQ: ${NOTIFICATION_PAYMENT_EVENTS_DLQ:-notification.payment-events.dlq.v1}
+      NOTIFICATION_PAYMENT_EVENT_MAX_ATTEMPTS: ${NOTIFICATION_PAYMENT_EVENT_MAX_ATTEMPTS:-3}
+      NOTIFICATION_PAYMENT_EVENT_RETRY_INITIAL_INTERVAL_MS: ${NOTIFICATION_PAYMENT_EVENT_RETRY_INITIAL_INTERVAL_MS:-1000}
+      NOTIFICATION_PAYMENT_EVENT_RETRY_MAX_INTERVAL_MS: ${NOTIFICATION_PAYMENT_EVENT_RETRY_MAX_INTERVAL_MS:-10000}
+      SMTP_HOST: ${SMTP_HOST:-mailhog}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_AUTH: ${SMTP_AUTH:-false}
+      SMTP_STARTTLS_ENABLE: ${SMTP_STARTTLS_ENABLE:-false}
+      NOTIFICATION_MAIL_FROM: ${NOTIFICATION_MAIL_FROM:-no-reply@n11-bootcamp.local}
+      NETGSM_SMS_ENDPOINT: ${NETGSM_SMS_ENDPOINT:-https://api.netgsm.com.tr/sms/send/get/}
+      NETGSM_USER_CODE: ${NETGSM_USER_CODE:-}
+      NETGSM_PASSWORD: ${NETGSM_PASSWORD:-}
+      NETGSM_MSG_HEADER: ${NETGSM_MSG_HEADER:-TEST}
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-true}
+    ports:
+      - "${NOTIFICATION_SERVICE_PORT:-8768}:8768"
+
+  api-gateway:
+    <<: *app-common
+    container_name: ecommerce-api-gateway
+    build:
+      context: .
+      dockerfile: Dockerfile.spring
+      args:
+        MODULE: api-gateway
+    depends_on:
+      config-server:
+        condition: service_started
+      discovery-server:
+        condition: service_started
+      keycloak:
+        condition: service_started
+    environment:
+      API_GATEWAY_PORT: ${API_GATEWAY_PORT:-8760}
+      CONFIG_URI: ${CONFIG_URI:-http://config-server:8762}
+      EUREKA_URI: ${EUREKA_URI:-http://discovery-server:8761/eureka}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI:-http://keycloak.localhost:8080/realms/ecommerce}
+      FRONTEND_ORIGIN_PATTERNS: ${FRONTEND_ORIGIN_PATTERNS:-http://localhost:4173,http://storefront.localhost:4173,http://localhost:5173}
+      GATEWAY_CONNECT_TIMEOUT_MS: ${GATEWAY_CONNECT_TIMEOUT_MS:-2000}
+      GATEWAY_RESPONSE_TIMEOUT: ${GATEWAY_RESPONSE_TIMEOUT:-5s}
+      GATEWAY_RATE_LIMIT_ENABLED: ${GATEWAY_RATE_LIMIT_ENABLED:-false}
+      GATEWAY_RATE_LIMIT_REPLENISH_RATE: ${GATEWAY_RATE_LIMIT_REPLENISH_RATE:-20}
+      GATEWAY_RATE_LIMIT_BURST_CAPACITY: ${GATEWAY_RATE_LIMIT_BURST_CAPACITY:-40}
+    ports:
+      - "${API_GATEWAY_PORT:-8760}:8760"
+
+  storefront:
+    restart: unless-stopped
+    container_name: ecommerce-storefront
+    build:
+      context: ./storefront
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8760}
+        VITE_OIDC_AUTHORITY: ${VITE_OIDC_AUTHORITY:-http://keycloak.localhost:8080/realms/ecommerce}
+        VITE_OIDC_CLIENT_ID: ${VITE_OIDC_CLIENT_ID:-storefront-web}
+    depends_on:
+      api-gateway:
+        condition: service_started
+      keycloak:
+        condition: service_started
+    networks:
+      - ecommerce-network
+    ports:
+      - "${STOREFRONT_PORT:-4173}:80"
+
+networks:
+  ecommerce-network:
+    driver: bridge

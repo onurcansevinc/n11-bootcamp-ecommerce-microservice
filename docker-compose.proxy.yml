@@ -1,0 +1,33 @@
+services:
+  caddy:
+    image: caddy:2.9-alpine
+    container_name: ecommerce-caddy
+    restart: unless-stopped
+    depends_on:
+      storefront:
+        condition: service_started
+      api-gateway:
+        condition: service_started
+      keycloak:
+        condition: service_started
+    environment:
+      FRONTEND_HOST: ${FRONTEND_HOST:-java-ecommerce.onurcansevinc.com}
+      API_HOST: ${API_HOST:-java-ecommerce-api.onurcansevinc.com}
+      AUTH_HOST: ${AUTH_HOST:-java-ecommerce-auth.onurcansevinc.com}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - ecommerce-network
+
+volumes:
+  caddy-data:
+  caddy-config:
+
+networks:
+  ecommerce-network:
+    driver: bridge

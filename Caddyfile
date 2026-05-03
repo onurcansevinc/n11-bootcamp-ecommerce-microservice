@@ -1,0 +1,14 @@
+{$FRONTEND_HOST} {
+    encode zstd gzip
+    reverse_proxy storefront:80
+}
+
+{$API_HOST} {
+    encode zstd gzip
+    reverse_proxy api-gateway:8760
+}
+
+{$AUTH_HOST} {
+    encode zstd gzip
+    reverse_proxy keycloak:8080
+}

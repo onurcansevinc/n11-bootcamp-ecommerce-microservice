@@ -256,11 +256,24 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "fullScopeAllowed": true,
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      },
       "redirectUris": [
-        "http://localhost:5173/*"
+        "http://localhost:5173",
+        "http://localhost:5173/*",
+        "http://localhost:4173",
+        "http://localhost:4173/*",
+        "http://storefront.localhost:4173",
+        "http://storefront.localhost:4173/*",
+        "https://java-ecommerce.onurcansevinc.com",
+        "https://java-ecommerce.onurcansevinc.com/*"
       ],
       "webOrigins": [
-        "http://localhost:5173"
+        "http://localhost:5173",
+        "http://localhost:4173",
+        "http://storefront.localhost:4173",
+        "https://java-ecommerce.onurcansevinc.com"
       ],
       "defaultClientScopes": [
         "basic",

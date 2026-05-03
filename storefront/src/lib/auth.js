@@ -13,3 +13,22 @@ export const oidcConfig = {
     window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
   }
 };
+
+export const demoCredentials = {
+  username: "customer-user",
+  password: "customer123"
+};
+
+export async function signinWithDemo(auth) {
+  try {
+    await navigator.clipboard?.writeText(demoCredentials.password);
+  } catch {
+    // Best-effort only.
+  }
+
+  return auth.signinRedirect({
+    extraQueryParams: {
+      login_hint: demoCredentials.username
+    }
+  });
+}

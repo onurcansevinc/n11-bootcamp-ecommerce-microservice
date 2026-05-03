@@ -302,6 +302,16 @@ a {
     gap: 0.7rem;
 }
 
+.demo-login-hint {
+    display: grid;
+    gap: 0.28rem;
+    justify-items: end;
+}
+
+.demo-login-hint.compact {
+    min-width: 0;
+}
+
 .ghost-chip,
 .primary-chip,
 .cart-chip,
@@ -386,6 +396,81 @@ a {
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.14);
     font-size: 0.85rem;
+}
+
+.demo-login-chip {
+    min-height: 52px;
+    padding: 0 1rem;
+    border-radius: 12px;
+    background: #fff4eb;
+    color: var(--brand-strong);
+    box-shadow: inset 0 0 0 1px rgba(242, 122, 26, 0.24);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.demo-login-chip.compact {
+    font-size: 0.92rem;
+}
+
+.demo-login-modal {
+    width: min(560px, 100%);
+    background: white;
+    border-radius: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.16);
+}
+
+.demo-login-modal-body {
+    display: grid;
+    gap: 1rem;
+}
+
+.demo-login-modal-body > p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.65;
+}
+
+.demo-credentials-card {
+    display: grid;
+    gap: 0.7rem;
+    padding: 1rem;
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255, 247, 240, 0.94), rgba(255, 255, 255, 0.98));
+    box-shadow: inset 0 0 0 1px rgba(242, 122, 26, 0.12);
+}
+
+.demo-credential-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.demo-credential-row span {
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.demo-credential-row strong {
+    font-size: 0.95rem;
+}
+
+.demo-credential-row code {
+    padding: 0.18rem 0.44rem;
+    border-radius: 999px;
+    background: white;
+    color: var(--brand-strong);
+    font-family: 'Sora', sans-serif;
+    font-size: 0.76rem;
+}
+
+.demo-login-footer {
+    justify-content: flex-end;
 }
 
 .page-layout {
@@ -1037,6 +1122,176 @@ a {
     gap: 1rem;
 }
 
+.product-detail-page {
+    padding: 1.2rem 0 3rem;
+}
+
+.product-detail-shell {
+    width: min(1280px, calc(100vw - 32px));
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+}
+
+.detail-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.detail-brand-link {
+    text-decoration: none;
+}
+
+.product-detail-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.product-detail-breadcrumb a {
+    color: var(--brand-strong);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.detail-loading-card {
+    min-height: 280px;
+    display: grid;
+    place-items: center;
+    justify-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.product-detail-card {
+    padding: 1.25rem;
+}
+
+.product-detail-grid {
+    display: grid;
+    grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.05fr);
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.product-detail-visual {
+    position: relative;
+    min-height: 520px;
+    padding: 1.5rem;
+    border-radius: 24px;
+    background:
+        linear-gradient(180deg, rgba(255, 247, 240, 0.96), rgba(248, 248, 248, 0.96)),
+        radial-gradient(circle at top, rgba(242, 122, 26, 0.16), transparent 34%);
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.product-detail-ribbon {
+    top: 16px;
+    left: 16px;
+}
+
+.product-detail-image {
+    width: min(78%, 380px);
+    max-height: 320px;
+    object-fit: contain;
+}
+
+.product-detail-monogram {
+    width: 132px;
+    height: 132px;
+    display: grid;
+    place-items: center;
+    border-radius: 36px;
+    background: white;
+    color: var(--brand-strong);
+    font-family: 'Sora', sans-serif;
+    font-size: 2rem;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+}
+
+.product-detail-visual-meta {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.product-detail-visual-meta span {
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    background: white;
+}
+
+.product-detail-visual-meta strong {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.7rem;
+    letter-spacing: -0.04em;
+    color: var(--brand-strong);
+}
+
+.product-detail-copy {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+}
+
+.product-detail-kicker {
+    color: var(--brand-strong);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.product-detail-copy h1 {
+    margin: 0;
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.05em;
+}
+
+.product-detail-copy > p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+.product-detail-pricing {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.product-detail-pricing strong {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    line-height: 1;
+}
+
+.product-detail-pricing small {
+    color: #149a59;
+    font-size: 0.88rem;
+    font-weight: 800;
+}
+
+.product-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.product-detail-link-button {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .detail-list {
     display: grid;
     gap: 0.7rem;
@@ -1141,6 +1396,13 @@ a {
     color: var(--muted);
 }
 
+.surface-card {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow);
+}
+
 .empty-state strong {
     display: block;
     color: var(--text);
@@ -1158,7 +1420,8 @@ a {
 .primary-button:hover,
 .secondary-button:hover,
 .provider-option:hover,
-.hero-showcase:hover {
+.hero-showcase:hover,
+.demo-login-chip:hover {
     transform: translateY(-2px);
 }
 
@@ -1174,6 +1437,7 @@ a {
     .hero-grid,
     .hero-main-card,
     .account-columns,
+    .product-detail-grid,
     .quick-view-body,
     .checkout-layout {
         grid-template-columns: 1fr;
@@ -1237,6 +1501,11 @@ a {
         grid-template-columns: 1fr;
     }
 
+    .demo-login-hint,
+    .demo-login-chip {
+        flex: 1 1 180px;
+    }
+
     .side-sheet,
     .modal-shell {
         width: 100%;
@@ -1249,6 +1518,8 @@ a {
     }
 
     .product-foot,
+    .detail-topbar,
+    .product-detail-actions,
     .sheet-footer,
     .line-card,
     .section-head,

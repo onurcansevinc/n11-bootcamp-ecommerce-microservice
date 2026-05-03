@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 import AccountPanel from "../components/AccountPanel";
 import CartPanel from "../components/CartPanel";
@@ -7,7 +8,6 @@ import Header from "../components/Header";
 import HeroSection from "../components/HeroSection";
 import Pagination from "../components/Pagination";
 import ProductGrid from "../components/ProductGrid";
-import ProductQuickView from "../components/ProductQuickView";
 import {
   addCartItem,
   createOrder,
@@ -18,7 +18,6 @@ import {
   fetchCategories,
   fetchOrders,
   fetchPayments,
-  fetchProduct,
   fetchProducts,
   simulatePaymentFailure,
   simulatePaymentSuccess,
@@ -65,6 +64,7 @@ function createCheckoutDraft(profile) {
 
 export default function HomePage() {
   const auth = useAuth();
+  const navigate = useNavigate();
   const accessToken = auth.user?.access_token;
   const isAuthenticated = auth.isAuthenticated;
 
@@ -84,8 +84,6 @@ export default function HomePage() {
   const [orders, setOrders] = useState([]);
   const [payments, setPayments] = useState([]);
   const [loadingAccount, setLoadingAccount] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [quickViewOpen, setQuickViewOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutDraft, setCheckoutDraft] = useState(createCheckoutDraft(auth.user?.profile));
   const [submittingCheckout, setSubmittingCheckout] = useState(false);
@@ -217,14 +215,8 @@ export default function HomePage() {
     }
   }
 
-  async function handleQuickView(productId) {
-    try {
-      const response = await fetchProduct(productId);
-      setSelectedProduct(response.data);
-      setQuickViewOpen(true);
-    } catch (error) {
-      setErrorMessage(error.message);
-    }
+  function handleQuickView(productId) {
+    navigate(`/products/${productId}`);
   }
 
   async function handleAddToCart(product) {
@@ -428,13 +420,6 @@ export default function HomePage() {
           <Pagination meta={meta} onPageChange={setPage} />
         </section>
       </main>
-
-      <ProductQuickView
-        product={selectedProduct}
-        open={quickViewOpen}
-        onClose={() => setQuickViewOpen(false)}
-        onAddToCart={handleAddToCart}
-      />
 
       <CartPanel
         open={cartOpen}

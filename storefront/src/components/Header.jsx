@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import DemoLoginHint from "./DemoLoginHint";
 
 export default function Header({
   auth,
@@ -137,9 +138,7 @@ export default function Header({
               </button>
             </>
           ) : (
-            <button type="button" className="primary-chip" onClick={() => auth.signinRedirect()}>
-              Giriş Yap
-            </button>
+            <DemoLoginHint auth={auth} compact />
           )}
 
           <button type="button" className="cart-chip" onClick={onCartOpen}>

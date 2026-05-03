@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 import HomePage from "../pages/HomePage";
 import PaymentResultPage from "../pages/PaymentResultPage";
+import ProductDetailPage from "../pages/ProductDetailPage";
 
 export default function App() {
   const auth = useAuth();
@@ -18,6 +19,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/products/:productId" element={<ProductDetailPage />} />
       <Route path="/payment/result" element={<PaymentResultPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

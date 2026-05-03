@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 export default function Header({
   auth,
   searchInput,
@@ -16,7 +18,36 @@ export default function Header({
     auth.user?.profile?.name ??
     "Misafir";
 
-  const navigationItems = (categories ?? []).slice(0, 8);
+  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
+  const categoryMenuRef = useRef(null);
+  const selectedCategory = (categories ?? []).find((category) => category.id === selectedCategoryId);
+
+  useEffect(() => {
+    function handlePointerDown(event) {
+      if (!categoryMenuRef.current?.contains(event.target)) {
+        setCategoryMenuOpen(false);
+      }
+    }
+
+    function handleEscape(event) {
+      if (event.key === "Escape") {
+        setCategoryMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  function handleCategorySelect(categoryId) {
+    onSelectCategory(categoryId);
+    setCategoryMenuOpen(false);
+  }
 
   return (
     <header className="site-header">
@@ -36,10 +67,52 @@ export default function Header({
           </span>
         </button>
 
-        <button type="button" className="category-hub" onClick={() => onSelectCategory(null)}>
-          <strong>Kategoriler</strong>
-          <small>Tüm kategoriler</small>
-        </button>
+        <div className="category-menu-shell" ref={categoryMenuRef}>
+          <button
+            type="button"
+            className={`category-hub ${categoryMenuOpen ? "open" : ""}`}
+            aria-haspopup="menu"
+            aria-expanded={categoryMenuOpen}
+            onClick={() => setCategoryMenuOpen((open) => !open)}
+          >
+            <span className="category-hub-copy">
+              <strong>Kategoriler</strong>
+              <small>{selectedCategory?.name ?? "Tüm kategoriler"}</small>
+            </span>
+            <span className="category-hub-caret" aria-hidden="true">
+              ▾
+            </span>
+          </button>
+
+          {categoryMenuOpen ? (
+            <div className="category-dropdown" role="menu" aria-label="Kategoriler">
+              <button
+                type="button"
+                className={selectedCategoryId ? "category-dropdown-item" : "category-dropdown-item active"}
+                onClick={() => handleCategorySelect(null)}
+              >
+                <strong>Tüm kategoriler</strong>
+                <small>Katalogdaki tüm ürünleri göster</small>
+              </button>
+
+              {(categories ?? []).map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  className={
+                    selectedCategoryId === category.id
+                      ? "category-dropdown-item active"
+                      : "category-dropdown-item"
+                  }
+                  onClick={() => handleCategorySelect(category.id)}
+                >
+                  <strong>{category.name}</strong>
+                  <small>Kategorideki ürünleri listele</small>
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
 
         <form className="search-bar" onSubmit={onSearchSubmit}>
           <input
@@ -76,26 +149,6 @@ export default function Header({
         </div>
       </div>
 
-      <div className="nav-strip">
-        <button
-          type="button"
-          className={selectedCategoryId ? "nav-link" : "nav-link active"}
-          onClick={() => onSelectCategory(null)}
-        >
-          Tüm Kategoriler
-        </button>
-
-        {navigationItems.map((category) => (
-          <button
-            key={category.id}
-            type="button"
-            className={selectedCategoryId === category.id ? "nav-link active" : "nav-link"}
-            onClick={() => onSelectCategory(category.id)}
-          >
-            {category.name}
-          </button>
-        ))}
-      </div>
     </header>
   );
 }

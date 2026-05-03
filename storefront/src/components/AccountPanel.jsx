@@ -1,4 +1,12 @@
-import { formatDate, formatPrice } from "../lib/format";
+import {
+  formatDate,
+  formatOrderItems,
+  formatOrderStatus,
+  formatPaymentProvider,
+  formatPaymentStatus,
+  formatPrice,
+  formatShortId
+} from "../lib/format";
 
 export default function AccountPanel({
   open,
@@ -41,12 +49,15 @@ export default function AccountPanel({
                 <div className="stack-list">
                   {orders.map((order) => (
                     <article key={order.id} className="line-card compact-card">
-                      <div>
-                        <strong>{order.id}</strong>
+                      <div className="line-copy">
+                        <strong>Sipariş #{formatShortId(order.id)}</strong>
                         <small>{formatDate(order.createdAt)}</small>
+                        <p>{formatOrderItems(order.items)}</p>
                       </div>
                       <div className="status-block">
-                        <span>{order.status}</span>
+                        <span className={`status-pill status-${String(order.status).toLowerCase()}`}>
+                          {formatOrderStatus(order.status)}
+                        </span>
                         <strong>{formatPrice(order.totalAmount)}</strong>
                       </div>
                     </article>
@@ -65,13 +76,19 @@ export default function AccountPanel({
                 <div className="stack-list">
                   {payments.map((payment) => (
                     <article key={payment.id} className="line-card compact-card payment-card">
-                      <div>
-                        <strong>{payment.orderId}</strong>
-                        <small>{payment.provider}</small>
+                      <div className="line-copy">
+                        <strong>Ödeme #{formatShortId(payment.id)}</strong>
+                        <small>
+                          Sipariş #{formatShortId(payment.orderId)} • {formatPaymentProvider(payment.provider)}
+                        </small>
+                        <p>{formatDate(payment.completedAt ?? payment.createdAt)}</p>
+                        {payment.failureReason ? <p>{payment.failureReason}</p> : null}
                       </div>
 
                       <div className="status-block">
-                        <span>{payment.status}</span>
+                        <span className={`status-pill status-${String(payment.status).toLowerCase()}`}>
+                          {formatPaymentStatus(payment.status)}
+                        </span>
                         <strong>{formatPrice(payment.amount)}</strong>
                       </div>
 

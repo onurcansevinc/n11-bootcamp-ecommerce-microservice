@@ -4,7 +4,7 @@ export default function ProductCard({ product, onQuickView, onAddToCart }) {
   return (
     <article className="product-card">
       <button type="button" className="product-visual" onClick={() => onQuickView(product.id)}>
-        <span className="discount-ribbon">Süper Fiyat</span>
+        <span className="discount-ribbon">Öne Çıkan</span>
         {product.mainImageUrl ? (
           <img className="product-image" src={product.mainImageUrl} alt={product.name} loading="lazy" />
         ) : (
@@ -16,7 +16,7 @@ export default function ProductCard({ product, onQuickView, onAddToCart }) {
       <div className="product-meta">
         <div className="card-badges">
           <span className="badge badge-orange">Ücretsiz Kargo</span>
-          {product.active ? <span className="badge">Avantajlı Fiyat</span> : null}
+          {product.active ? <span className="badge">Aynı Gün Kargo</span> : null}
         </div>
 
         <button type="button" className="product-name" onClick={() => onQuickView(product.id)}>
@@ -28,7 +28,7 @@ export default function ProductCard({ product, onQuickView, onAddToCart }) {
 
         <div className="product-pricing">
           <strong>{formatPrice(product.price)}</strong>
-          <small>Peşin fiyatına 3 taksit (demo)</small>
+          <small>Peşin fiyatına 3 taksit</small>
         </div>
 
         <div className="product-foot">

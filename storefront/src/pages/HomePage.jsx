@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import AccountPanel from "../components/AccountPanel";
 import CartPanel from "../components/CartPanel";
-import CategoryRail from "../components/CategoryRail";
 import CheckoutModal from "../components/CheckoutModal";
 import Header from "../components/Header";
 import HeroSection from "../components/HeroSection";
@@ -405,15 +404,6 @@ export default function HomePage() {
             </button>
           </div>
         ) : null}
-
-        <CategoryRail
-          categories={categories}
-          selectedCategoryId={selectedCategoryId}
-          onSelectCategory={(categoryId) => {
-            setSelectedCategoryId(categoryId);
-            setPage(0);
-          }}
-        />
 
         <HeroSection products={products} onQuickView={handleQuickView} />
 
